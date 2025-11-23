@@ -536,21 +536,21 @@ export default function App() {
             <section className="py-16 container mx-auto px-4 md:px-6">
               <SectionTitle title="Featured Collections" subtitle="Handpicked artisan products and regional specialties." />
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div onClick={() => setView('shop')} className="cursor-pointer group relative rounded-xl overflow-hidden h-64 shadow-lg">
+                <div onClick={() => { setView('shop'); setActiveCategory('Textiles'); }} className="cursor-pointer group relative rounded-xl overflow-hidden h-64 shadow-lg">
                   <img src="https://images.unsplash.com/photo-1606293926249-ed2297699f40?auto=format&fit=crop&q=80&w=1200" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Pashmina" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 flex items-end p-6 text-white">
                     <div><h3 className="text-2xl font-serif font-bold">Pashmina</h3><p className="text-sm opacity-90">Soft gold from Changthangi goats.</p></div>
                   </div>
                 </div>
 
-                <div onClick={() => setView('shop')} className="cursor-pointer group relative rounded-xl overflow-hidden h-64 shadow-lg">
+                <div onClick={() => { setView('shop'); setActiveCategory('Spices'); }} className="cursor-pointer group relative rounded-xl overflow-hidden h-64 shadow-lg">
                   <img src="https://images.unsplash.com/photo-1615485290386-254d519dc75b?auto=format&fit=crop&q=80&w=1200" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Saffron" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 flex items-end p-6 text-white">
                     <div><h3 className="text-2xl font-serif font-bold">Pampore Saffron</h3><p className="text-sm opacity-90">Red threads with powerful aroma.</p></div>
                   </div>
                 </div>
 
-                <div onClick={() => setView('shop')} className="cursor-pointer group relative rounded-xl overflow-hidden h-64 shadow-lg">
+                <div onClick={() => { setView('shop'); setActiveCategory('Art'); }} className="cursor-pointer group relative rounded-xl overflow-hidden h-64 shadow-lg">
                   <img src="https://images.unsplash.com/photo-1605218427368-35b06144b5d5?auto=format&fit=crop&q=80&w=1200" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Handicrafts" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 flex items-end p-6 text-white">
                     <div><h3 className="text-2xl font-serif font-bold">Handicrafts</h3><p className="text-sm opacity-90">Paper-mâché, wood carving & more.</p></div>
@@ -604,16 +604,72 @@ export default function App() {
 
         {view === 'track' && <TrackOrder />}
 
+        {/* REVISED 'Our Story' PAGE (view === 'about') */}
         {view === 'about' && (
-          <section className="py-20 bg-white">
-            <div className="container mx-auto px-4 md:px-6 max-w-4xl">
-              <h1 className="text-4xl md:text-5xl font-serif font-bold text-stone-800 mb-6">Our Story</h1>
-              <p className="text-lg text-stone-600 mb-6">Vadi-e-Kashmir started as a simple idea: give the artisans of the valley a fair way to reach collectors and customers worldwide. We value authenticity, traceability, and sustainable craft — every product we sell is either GI-tagged, certified, or hand-verified by our local partners in Srinagar.</p>
-              <h3 className="text-xl font-bold mb-2">Community & Fair Trade</h3>
-              <p className="text-stone-600 mb-4">We work with cooperative groups and small family workshops; fair prices and long-term partnerships are at the heart of what we do.</p>
-              <h3 className="text-xl font-bold mb-2">Sustainability</h3>
-              <p className="text-stone-600 mb-4">From packaging to courier choices, we prioritize low-impact options where possible and educate artisans about sustainable practices.</p>
-              <blockquote className="border-l-4 border-amber-600 pl-4 italic text-stone-700 mt-6">"Each product carries a story — we’re only the bridge connecting that story to you."</blockquote>
+          <section className="py-20 bg-stone-50">
+            <div className="container mx-auto px-4 md:px-6 max-w-5xl">
+              <SectionTitle title="The Valley's Voice" subtitle="Our journey to bridge the authentic craftsmanship of Kashmir with the world." />
+              
+              {/* Pillar 1: The Soul of Craft */}
+              <div className="flex flex-col md:flex-row gap-10 mb-16 items-center">
+                <div className="md:w-1/2">
+                  <h3 className="text-3xl font-serif font-bold text-stone-800 mb-4">The Promise of Purity ✨</h3>
+                  <p className="text-lg text-stone-600 mb-4">
+                    Vadi-e-Kashmir started with a deep reverence for the land and its people. For centuries, the valley has been a crucible of unparalleled craft—from the ethereal softness of Pashmina to the potent aroma of Pampore Saffron. Our mission is simple: to preserve this heritage by ensuring every artisan receives a fair, dignified share.
+                  </p>
+                  <p className="text-stone-600">
+                    We are not just a marketplace; we are the gatekeepers of authenticity. Every product is rigorously vetted—it is either GI-tagged, certified, or personally verified through our established network of local, trusted partners in Srinagar and the surrounding regions.
+                  </p>
+                </div>
+                <div className="md:w-1/2 rounded-xl overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-700">
+                  <img src="https://imgs.search.brave.com/2JDsVfLwQAAPJSTLWnlrjvwQ9F8BwomNtEJhc5SgXRk/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTIz/NDczMTQ3Ni9waG90/by9rYXNobWlyaS1j/cmFmdHNtYW4tcG9s/aXNoZXMtYS1oYW5k/LWNhcnZlZC13YWxu/dXQtZHJhd2VyLWlu/LWEtc21hbGwtZmxv/YXRpbmctd29ya3No/b3Atb24tZGFsLmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz0x/eTgwQ2NOajhPM04w/dmc2YU50RmQ4dEVR/TGkwZUExM3NyMno1/VjM3dnNZPQ" alt="Artisan working on a craft" className="w-full h-80 object-cover" />
+                </div>
+              </div>
+
+              {/* Pillar 2: Community & Fair Trade */}
+              <div className="flex flex-col md:flex-row-reverse gap-10 mb-16 items-center">
+                <div className="md:w-1/2">
+                  <h3 className="text-3xl font-serif font-bold text-stone-800 mb-4">Empowering the Hand That Creates 🤲</h3>
+                  <p className="text-lg text-stone-600 mb-4">
+                    We actively work with cooperative groups and small family workshops, shifting the power dynamic back to the creators. Our fair pricing model ensures that the true value of their meticulous work is recognized and rewarded, helping to secure their generational craft against mass-market dilution.
+                  </p>
+                  <p className="text-stone-600">
+                    This is about long-term partnership, not transactions. When you buy a product from us, you are not just acquiring an item; you are investing in a family’s livelihood, supporting a sustainable ecosystem of traditional artistry, and helping to keep ancient techniques alive.
+                  </p>
+                </div>
+                <div className="md:w-1/2 rounded-xl overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-700">
+                  <img src="https://imgs.search.brave.com/VvN0lDt3Z9QfdMDo8H5a0SJlyyMJ8MJre-zXsMVTEkM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMucGV4ZWxzLmNv/bS9waG90b3MvMjQz/OTc4Ny9wZXhlbHMt/cGhvdG8tMjQzOTc4/Ny5qcGVnP2F1dG89/Y29tcHJlc3MmY3M9/dGlueXNyZ2ImZHBy/PTEmdz01MDA" alt="Kashmiri landscape or architecture" className="w-full h-80 object-cover" />
+                </div>
+              </div>
+
+              {/* Pillar 3: Sustainability & Responsibility */}
+              <div className="flex flex-col md:flex-row gap-10 mb-16 items-center">
+                <div className="md:w-1/2">
+                  <h3 className="text-3xl font-serif font-bold text-stone-800 mb-4">A Footprint of Care 🌲</h3>
+                  <p className="text-lg text-stone-600 mb-4">
+                    Our responsibility extends beyond fair prices to the planet itself. We prioritize low-impact, sustainable practices wherever possible—from using eco-friendly packaging to carefully selecting courier partners who share our values.
+                  </p>
+                  <p className="text-stone-600">
+                    Every choice is made with the future in mind. We believe that true luxury should never come at the cost of the environment or the community. Our commitment is to offer you products that are as beautiful in origin as they are in appearance.
+                  </p>
+                </div>
+                <div className="md:w-1/2 rounded-xl overflow-hidden shadow-2xl transform hover:scale-[1.02] transition-transform duration-700">
+                  <img src="https://imgs.search.brave.com/XHwaDBMH6ZegoO6GbDCsB0w2PScVzIiQADVs1ufRlpo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/a2FzaG1pcm9ubGlu/ZXN0b3JlLmNvbS9j/ZG4vc2hvcC9maWxl/cy9hLWJvd2wtb2Yt/ZHJ5LWZydWl0cy1p/bmNsdWRpbmctYWxt/b25kcy1jX2NaTi1t/bWdNVGJlZkE0SFRu/WGdaTXdfbHVURVdM/dDJSZFM3dXZWV0cw/U3EwZy5qcGc_dj0x/NzQ0NDQ3Njc2Jndp/ZHRoPTE5MjA" alt="Dry fruits or spices display" className="w-full h-80 object-cover" />
+                </div>
+              </div>
+              
+              {/* Emotional Climax & Developer Story */}
+              <div className="bg-amber-700 text-white p-10 md:p-16 rounded-2xl shadow-2xl mt-16 text-center animate-in fade-in duration-1000">
+                <blockquote className="text-2xl italic font-light mb-6">
+                  "Each product carries a story, a heartbeat, and the dedication of a master’s lifetime. We’re only the bridge connecting that soul to yours."
+                </blockquote>
+                <div className="w-24 h-1 bg-white/50 mx-auto mb-8"></div>
+                <h3 className="text-xl font-bold mb-4">A Note From the Owners</h3>
+                <p className="text-sm md:text-base max-w-3xl mx-auto opacity-90">
+                  This platform, Vadi-e-Kashmir, is a labor of love built by two college students currently navigating their second year. We created this because we passionately believe in the artisans craft. As we grow, we aim to build your trust first: for the next few months, we will operate on a Non-COD (Cash on Delivery) model to establish a solid foundation and streamline logistics. We promise to quickly integrate COD and many more products as soon as our ecosystem matures. We are committed to transparency, and your support today helps us move forward, allowing us to dedicate more resources to making Vadi-e-Kashmir the definitive digital home for Kashmiri artistry.
+                </p>
+              </div>
+
             </div>
           </section>
         )}
