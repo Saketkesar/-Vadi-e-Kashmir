@@ -103,7 +103,8 @@ const CheckoutModal = ({ cart, onClose, onSuccess }) => {
           window.location.hash = '#home';
         }, 2000);
       } else {
-        toast.error('Failed to place order. Please try again.');
+        console.error('Order creation failed:', result.error);
+        toast.error(`Failed to place order: ${result.error || 'Please try again.'}`);
       }
     } catch (error) {
       console.error('Order placement error:', error);
