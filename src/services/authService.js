@@ -1,6 +1,7 @@
 // src/services/authService.js
 import { account, ID } from '../config/appwrite';
 import { databases, DATABASE_ID, COLLECTION_IDS } from '../config/appwrite';
+import { Query } from 'appwrite';
 
 class AuthService {
   // Create phone session (send OTP)
@@ -216,7 +217,7 @@ class AuthService {
       const users = await databases.listDocuments(
         DATABASE_ID,
         COLLECTION_IDS.USERS,
-        [`userId=${userId}`]
+        [Query.equal('userId', userId)]
       );
 
       if (users.documents.length === 0) {
