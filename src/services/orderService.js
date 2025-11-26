@@ -24,7 +24,7 @@ class OrderService {
           paymentStatus: 'pending',
           subtotal: orderData.subtotal,
           gst: orderData.gst,
-          total: orderData.total,
+          totalAmount: orderData.total,
           paymentMethod: orderData.paymentMethod,
           userId: orderData.userId || 'guest',
           createdAt: orderData.createdAt,
