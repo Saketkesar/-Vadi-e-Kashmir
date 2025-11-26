@@ -1,31 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    
+    <!-- Essential Meta Tags -->
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <!-- Primary Meta Tags -->
+    <title>Vadi-e-Kashmir - Authentic Kashmir Products | Pashmina, Saffron & Handicrafts</title>
+    <meta name="title" content="Vadi-e-Kashmir - Authentic Kashmir Products | Pashmina, Saffron & Handicrafts" />
+    <meta name="description" content="Discover authentic Kashmir products from local artisans. Shop premium Pashmina shawls, pure saffron, traditional handicrafts, and more. Direct from Kashmir to your doorstep with fast shipping across India." />
+    <meta name="keywords" content="kashmir products, pashmina shawls, kashmir saffron, kashmiri handicrafts, authentic kashmir, kashmiri carpets, kashmiri art, kashmiri shawls, dry fruits kashmir, kashmiri walnuts, buy kashmir products online, kashmir marketplace, kashmiri vendors" />
+    <meta name="author" content="Vadi-e-Kashmir" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://vadiekashmir.com/" />
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://vadiekashmir.com/" />
+    <meta property="og:title" content="Vadi-e-Kashmir - Authentic Kashmir Products | Pashmina, Saffron & Handicrafts" />
+    <meta property="og:description" content="Discover authentic Kashmir products from local artisans. Shop premium Pashmina shawls, pure saffron, traditional handicrafts, and more." />
+    <meta property="og:image" content="https://vadiekashmir.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Vadi-e-Kashmir" />
+    <meta property="og:locale" content="en_IN" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://vadiekashmir.com/" />
+    <meta name="twitter:title" content="Vadi-e-Kashmir - Authentic Kashmir Products" />
+    <meta name="twitter:description" content="Shop authentic Kashmir products from local artisans. Premium Pashmina, Saffron & more." />
+    <meta name="twitter:image" content="https://vadiekashmir.com/og-image.jpg" />
+    <meta name="twitter:site" content="@vadiekashmir" />
+    <meta name="twitter:creator" content="@vadiekashmir" />
+
+    <!-- Favicon and Icons -->
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="192x192" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="%PUBLIC_URL%/logo512.png" />
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#b45309" />
+    <meta name="msapplication-TileColor" content="#b45309" />
+    <meta name="msapplication-TileImage" content="%PUBLIC_URL%/logo192.png" />
+
+    <!-- Mobile App Tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Vadi-e-Kashmir" />
+
+    <!-- Geographic Tags -->
+    <meta name="geo.region" content="IN-JK" />
+    <meta name="geo.placename" content="Srinagar, Kashmir" />
+    <meta name="geo.position" content="34.083656;74.797371" />
+    <meta name="ICBM" content="34.083656, 74.797371" />
+
+    <!-- Manifest -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fra.cloud.appwrite.io" />
+    <link rel="dns-prefetch" href="https://fra.cloud.appwrite.io" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Vadi-e-Kashmir",
+      "alternateName": "Vadi e Kashmir",
+      "url": "https://vadiekashmir.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://vadiekashmir.com/#shop?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Vadi-e-Kashmir",
+      "legalName": "Vadi-e-Kashmir Marketplace",
+      "url": "https://vadiekashmir.com",
+      "logo": "https://vadiekashmir.com/logo512.png",
+      "foundingDate": "2025",
+      "description": "Authentic Kashmir products marketplace connecting customers with local artisans and vendors. Shop Pashmina shawls, saffron, handicrafts, and more.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Main Bazaar, Residency Road",
+        "addressLocality": "Srinagar",
+        "addressRegion": "Jammu and Kashmir",
+        "postalCode": "190001",
+        "addressCountry": "IN"
+      },
+      "contactPoint": [{
+        "@type": "ContactPoint",
+        "telephone": "+91-79797472200",
+        "contactType": "Customer Service",
+        "email": "hello@vadiekashmir.com",
+        "areaServed": "IN",
+        "availableLanguage": ["English", "Hindi", "Urdu"]
+      }],
+      "sameAs": [
+        "https://www.facebook.com/vadiekashmir",
+        "https://www.instagram.com/vadiekashmir",
+        "https://twitter.com/vadiekashmir"
+      ]
+    }
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
