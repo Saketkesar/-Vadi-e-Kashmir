@@ -1,10 +1,11 @@
 // src/config/appwrite.js
-import { Client, Account, Databases, Storage, ID } from 'appwrite';
+import { Client, Account, Databases, Storage, ID, Functions } from 'appwrite';
 
 // Appwrite Configuration - Using Environment Variables
 const APPWRITE_ENDPOINT = process.env.REACT_APP_APPWRITE_ENDPOINT;
 const APPWRITE_PROJECT_ID = process.env.REACT_APP_APPWRITE_PROJECT_ID;
 const APPWRITE_DATABASE_ID = process.env.REACT_APP_APPWRITE_DATABASE_ID;
+const APPWRITE_EMAIL_FUNCTION_ID = process.env.REACT_APP_EMAIL_FUNCTION_ID;
 
 // Validate required environment variables
 if (!APPWRITE_ENDPOINT || !APPWRITE_PROJECT_ID || !APPWRITE_DATABASE_ID) {
@@ -39,11 +40,13 @@ const client = new Client()
 export const account = new Account(client);
 export const databases = new Databases(client);
 export const storage = new Storage(client);
+export const functions = new Functions(client);
 export { ID };
 
 // Export configuration for use in constructing URLs
 export const DATABASE_ID = APPWRITE_DATABASE_ID;
 export const ENDPOINT = APPWRITE_ENDPOINT;
 export const PROJECT_ID = APPWRITE_PROJECT_ID;
+export const EMAIL_FUNCTION_ID = APPWRITE_EMAIL_FUNCTION_ID;
 
 export default client;

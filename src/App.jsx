@@ -437,18 +437,276 @@ const CartDrawer = ({ isOpen, onClose, cart, onRemove, onUpdateQty, onCheckout }
   );
 };
 
+/* --------------------------
+   Track Order Page Component
+   -------------------------- */
+const TrackOrderPage = () => {
+  const [orderNumber, setOrderNumber] = useState('');
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleTrackOrder = async (e) => {
+    e.preventDefault();
+    
+    if (!orderNumber.trim()) {
+      setError('Please enter your order number');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setOrder(null);
+
+    try {
+      const result = await orderService.trackOrderByNumber(orderNumber.trim());
+      
+      if (result.success) {
+        setOrder(result.order);
+        toast.success('Order found!');
+      } else {
+        setError(result.error || 'Order not found');
+        toast.error(result.error || 'Order not found');
+      }
+    } catch (err) {
+      // Check if it's an authentication error
+      if (err.message?.includes('authorized') || err.code === 401) {
+        setError('Please login to track your order');
+        toast.error('Please login to track your order');
+      } else {
+        setError('Failed to track order. Please try again.');
+        toast.error('Failed to track order');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'delivered': return 'bg-green-100 text-green-700 border-green-300';
+      case 'shipped': return 'bg-blue-100 text-blue-700 border-blue-300';
+      case 'processing': return 'bg-amber-100 text-amber-700 border-amber-300';
+      case 'cancelled': return 'bg-red-100 text-red-700 border-red-300';
+      default: return 'bg-stone-100 text-stone-700 border-stone-300';
+    }
+  };
+
+  const getStatusSteps = (currentStatus) => {
+    const statuses = ['pending', 'processing', 'shipped', 'delivered'];
+    const currentIndex = statuses.indexOf(currentStatus);
+    
+    return statuses.map((status, index) => ({
+      status,
+      label: status.charAt(0).toUpperCase() + status.slice(1),
+      completed: index <= currentIndex,
+      active: status === currentStatus
+    }));
+  };
+
+  return (
+    <section className="py-12 container mx-auto px-4 max-w-4xl min-h-screen">
+      <SectionTitle title="Track Your Order" subtitle="Enter your Order ID to check the status" />
+      
+      {/* Search Form */}
+      <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+        <form onSubmit={handleTrackOrder} className="space-y-4">
+          <div>
+            <label className="block text-stone-700 font-medium mb-2">Order Number</label>
+            <input
+              type="text"
+              value={orderNumber}
+              onChange={(e) => setOrderNumber(e.target.value)}
+              placeholder="Enter your order number (e.g., VK176418352177...)"
+              className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
+              disabled={loading}
+            />
+            <p className="text-sm text-stone-500 mt-2">
+              You can find your order number in the confirmation email
+            </p>
+          </div>
+          
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded">
+              <p className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5" />
+                {error}
+              </p>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-3 rounded-lg hover:from-amber-700 hover:to-amber-800 disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Tracking...
+              </>
+            ) : (
+              <>
+                <Package className="w-5 h-5" />
+                Track Order
+              </>
+            )}
+          </button>
+        </form>
+      </div>
+
+      {/* Order Details */}
+      {order && (
+        <div className="space-y-6">
+          {/* Order Header */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-2xl font-bold text-stone-800">Order #{order.orderNumber}</h3>
+                <p className="text-stone-600">Placed on {new Date(order.$createdAt).toLocaleDateString()}</p>
+              </div>
+              <div className={`px-4 py-2 rounded-full font-semibold border-2 ${getStatusColor(order.status)}`}>
+                {order.status.toUpperCase()}
+              </div>
+            </div>
+
+            {/* Progress Tracker */}
+            {order.status !== 'cancelled' && (
+              <div className="mt-6">
+                <div className="flex items-center justify-between">
+                  {getStatusSteps(order.status).map((step, index) => (
+                    <div key={step.status} className="flex-1 relative">
+                      <div className="flex flex-col items-center">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+                          step.completed 
+                            ? 'bg-amber-600 border-amber-600 text-white' 
+                            : 'bg-white border-stone-300 text-stone-400'
+                        }`}>
+                          {step.completed ? (
+                            <CheckCircle className="w-6 h-6" />
+                          ) : (
+                            <div className="w-3 h-3 rounded-full bg-stone-300"></div>
+                          )}
+                        </div>
+                        <p className={`text-xs mt-2 font-medium ${step.completed ? 'text-stone-800' : 'text-stone-400'}`}>
+                          {step.label}
+                        </p>
+                      </div>
+                      {index < getStatusSteps(order.status).length - 1 && (
+                        <div className={`absolute top-5 left-1/2 w-full h-0.5 ${
+                          step.completed ? 'bg-amber-600' : 'bg-stone-300'
+                        }`}></div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {order.trackingNumber && (
+              <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-stone-600">Tracking Number</p>
+                <p className="font-bold text-stone-800 text-lg">{order.trackingNumber}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Customer & Shipping Info */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h4 className="font-bold text-lg mb-4 flex items-center gap-2">
+                <Package className="w-5 h-5 text-amber-600" />
+                Customer Information
+              </h4>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs text-stone-500">Name</p>
+                  <p className="font-medium text-stone-800">{order.customerName}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-stone-500">Email</p>
+                  <p className="font-medium text-stone-800">{order.email}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-stone-500">Phone</p>
+                  <p className="font-medium text-stone-800">{order.phone}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h4 className="font-bold text-lg mb-4 flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-amber-600" />
+                Shipping Address
+              </h4>
+              <div className="space-y-1 text-stone-800">
+                <p>{order.address1}</p>
+                {order.address2 && <p>{order.address2}</p>}
+                <p>{order.city}, {order.state} - {order.pincode}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Order Items */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h4 className="font-bold text-lg mb-4">Order Items</h4>
+            <div className="space-y-4">
+              {order.items.map((item, index) => (
+                <div key={index} className="flex items-center gap-4 p-4 bg-stone-50 rounded-lg">
+                  <img 
+                    src={item.image || 'https://via.placeholder.com/80'} 
+                    alt={item.productName}
+                    className="w-20 h-20 object-cover rounded-lg"
+                  />
+                  <div className="flex-1">
+                    <h5 className="font-medium text-stone-800">{item.productName}</h5>
+                    <p className="text-sm text-stone-600">Quantity: {item.quantity}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-amber-600">₹{(item.price * item.quantity).toLocaleString()}</p>
+                    <p className="text-xs text-stone-500">₹{item.price} each</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Order Summary */}
+            <div className="border-t border-stone-200 mt-6 pt-4 space-y-2">
+              <div className="flex justify-between text-stone-600">
+                <span>Subtotal</span>
+                <span>₹{order.subtotal.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-stone-600">
+                <span>GST (5%)</span>
+                <span>₹{order.gst.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-lg font-bold text-stone-800 pt-2 border-t">
+                <span>Total Amount</span>
+                <span className="text-amber-600">₹{order.totalAmount.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+};
+
 export default function App() {
   // State
   const [view, setView] = useState('home'); // 'home', 'shop', 'track', 'about', 'login', etc.
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [categoryMap, setCategoryMap] = useState({}); // Map category name to ID
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('All');
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
   // Load user session and data on mount
   useEffect(() => {
@@ -498,8 +756,13 @@ export default function App() {
     const result = await categoryService.getCategories();
     if (result.success) {
       setCategories(['All', ...result.categories.map(c => c.name)]);
+      // Store full category objects for filtering
+      setCategoryMap(result.categories.reduce((acc, cat) => {
+        acc[cat.name] = cat.$id;
+        return acc;
+      }, {}));
     } else {
-      setCategories(['All', 'Textiles', 'Spices', 'Food', 'Dry Fruits', 'Art', 'Beverages']);
+      setCategories(['All', 'Textiles', 'Spices', 'Food', 'Dry Fruits', 'Dairy Products', 'Art', 'Beverages']);
     }
   };
 
@@ -571,6 +834,15 @@ export default function App() {
       toast.error('Your cart is empty');
       return;
     }
+    
+    // Check if user is logged in
+    if (!user) {
+      toast.error('Please login to proceed with checkout');
+      setIsCartOpen(false);
+      window.location.hash = '#login';
+      return;
+    }
+    
     setIsCartOpen(false); // Close cart sidebar
     setShowCheckoutModal(true); // Open checkout modal
   };
@@ -579,9 +851,44 @@ export default function App() {
   const filteredProducts = activeCategory === 'All'
     ? products
     : products.filter(p => {
-        // Try to match against category name or categoryId
-        return p.category === activeCategory || categories.includes(activeCategory);
+        // Match by categoryId using the categoryMap
+        const categoryId = categoryMap[activeCategory];
+        return p.categoryId === categoryId;
       });
+
+  // Filter products by search query
+  const searchFilteredProducts = searchQuery.trim() 
+    ? products.filter(p => 
+        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.categoryName?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
+  // Handle search
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    setShowSearchResults(query.trim().length > 0);
+  };
+
+  const handleSearchSelect = (product) => {
+    window.location.hash = `#product/${product.slug || product.$id}`;
+    setSearchQuery('');
+    setShowSearchResults(false);
+  };
+
+  // Close search results when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (showSearchResults && !e.target.closest('.search-container')) {
+        setShowSearchResults(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showSearchResults]);
 
   // Handle hash navigation
   useEffect(() => {
@@ -665,9 +972,56 @@ export default function App() {
           </nav>
 
           <div className="flex items-center gap-4">
-            <button className="hidden md:block p-2 hover:bg-stone-100 rounded-full transition-colors">
-              <Search size={20} className="text-stone-600" />
-            </button>
+            {/* Search Bar */}
+            <div className="hidden md:block relative search-container">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={handleSearch}
+                  onFocus={() => searchQuery && setShowSearchResults(true)}
+                  className="w-64 pl-10 pr-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
+                />
+                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+              </div>
+              
+              {/* Search Results Dropdown */}
+              {showSearchResults && searchFilteredProducts.length > 0 && (
+                <div className="absolute top-full mt-2 w-96 bg-white rounded-lg shadow-2xl border border-stone-200 max-h-96 overflow-y-auto z-50">
+                  {searchFilteredProducts.slice(0, 8).map(product => (
+                    <div
+                      key={product.$id}
+                      onClick={() => handleSearchSelect(product)}
+                      className="flex items-center gap-3 p-3 hover:bg-stone-50 cursor-pointer border-b border-stone-100 last:border-0"
+                    >
+                      <img 
+                        src={product.images?.[0] || product.image || 'https://via.placeholder.com/60'} 
+                        alt={product.name}
+                        className="w-14 h-14 object-cover rounded-lg"
+                      />
+                      <div className="flex-1">
+                        <h4 className="font-medium text-stone-800 text-sm line-clamp-1">{product.name}</h4>
+                        <p className="text-xs text-stone-500 line-clamp-1">{product.categoryName || 'Product'}</p>
+                        <p className="text-sm font-bold text-amber-600 mt-1">₹{product.price?.toLocaleString()}</p>
+                      </div>
+                    </div>
+                  ))}
+                  {searchFilteredProducts.length > 8 && (
+                    <div className="p-3 text-center text-sm text-stone-500 bg-stone-50">
+                      +{searchFilteredProducts.length - 8} more results
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* No Results Message */}
+              {showSearchResults && searchQuery && searchFilteredProducts.length === 0 && (
+                <div className="absolute top-full mt-2 w-96 bg-white rounded-lg shadow-2xl border border-stone-200 p-4 z-50">
+                  <p className="text-stone-500 text-sm text-center">No products found for "{searchQuery}"</p>
+                </div>
+              )}
+            </div>
 
             <button onClick={() => setIsCartOpen(true)} className="relative p-2 hover:bg-stone-100 rounded-full transition-colors">
               <ShoppingBag size={20} className="text-stone-600" />
@@ -873,16 +1227,7 @@ export default function App() {
         )}
 
         {/* TRACK ORDER PAGE */}
-        {view === 'track' && (
-          <section className="py-12 container mx-auto px-4 max-w-2xl min-h-screen">
-            <SectionTitle title="Track Your Order" subtitle="Enter your Order ID to check status" />
-            <div className="bg-white rounded-xl shadow-lg p-8">
-              <p className="text-stone-600 text-center">
-                Order tracking functionality coming soon! You'll be able to track your shipment in real-time.
-              </p>
-            </div>
-          </section>
-        )}
+        {view === 'track' && <TrackOrderPage />}
 
         {/* ABOUT PAGE */}
         {view === 'about' && (
@@ -939,6 +1284,28 @@ export default function App() {
 
         {/* ADMIN DASHBOARD */}
         {view === 'admin' && user && user.email === 'admin@vadikashmir.com' && <AdminDashboard user={user} />}
+
+        {/* TEST EMAIL PAGE */}
+        {view === 'test-email' && (
+          <section className="py-12 container mx-auto px-4 max-w-2xl min-h-screen">
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <h2 className="text-2xl font-bold text-stone-800 mb-4">📧 Email Feature</h2>
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">🚀</div>
+                <h3 className="text-3xl font-bold text-stone-700 mb-2">Coming Soon!</h3>
+                <p className="text-stone-600 mb-6">
+                  We're working on bringing you email notifications for orders.
+                </p>
+                <button
+                  onClick={() => window.location.hash = '#'}
+                  className="px-6 py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
+                >
+                  Back to Home
+                </button>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* LEGAL PAGES */}
         {view === 'privacy-policy' && <PrivacyPolicy />}
@@ -1038,6 +1405,7 @@ export default function App() {
       {showCheckoutModal && (
         <CheckoutModal 
           cart={cart}
+          user={user}
           onClose={() => setShowCheckoutModal(false)}
           onSuccess={() => {
             setCart([]);
