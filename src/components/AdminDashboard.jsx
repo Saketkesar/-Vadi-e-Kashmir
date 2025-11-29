@@ -66,11 +66,21 @@ const AdminDashboard = ({ user, onClose }) => {
       <div className="max-w-7xl mx-auto p-4 md:p-8">
         <div className="bg-white rounded-lg shadow-lg">
           {/* Header */}
-          <div className="border-b border-stone-200 p-6">
+          <div className="border-b border-stone-200 p-6 flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-stone-800">Admin Dashboard</h1>
               <p className="text-stone-600 text-sm mt-1">Welcome back, {user?.name || user?.email || 'Admin'}!</p>
             </div>
+            <button
+              onClick={() => {
+                toast.info('📧 Email feature coming soon! Stay tuned!');
+              }}
+              className="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed flex items-center gap-2 text-sm"
+              title="Coming Soon"
+            >
+              <Mail className="w-4 h-4" />
+              Email (Coming Soon)
+            </button>
           </div>
 
           {/* Tabs */}
@@ -555,9 +565,286 @@ const ProductForm = ({ product, categories, onClose, onSuccess }) => {
   );
 };
 
+// Email Send Modal
+const EmailModal = ({ order, onClose, onSuccess }) => {
+  const [template, setTemplate] = useState('confirmed');
+  const [trackingLink, setTrackingLink] = useState('');
+  const [sending, setSending] = useState(false);
+
+  const handleSendEmail = async () => {
+    // Coming Soon - Email feature disabled
+    toast.info('📧 Email feature coming soon! Stay tuned!');
+    onClose();
+    return;
+    
+    /* Disabled for now
+    setSending(true);
+    
+    const result = await orderService.sendCustomEmail(
+      order, 
+      template, 
+      template === 'shipped' ? trackingLink : null
+    );
+    
+    setSending(false);
+    
+    if (result.success) {
+      toast.success(result.message);
+      onSuccess();
+      onClose();
+    } else {
+      toast.error('Failed to send email: ' + result.error);
+    }
+    */
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+      <div className="bg-white rounded-xl max-w-md w-full">
+        <div className="border-b border-stone-200 p-6 flex items-center justify-between">
+          <h3 className="text-xl font-bold flex items-center gap-2">
+            <Mail className="w-5 h-5 text-amber-600" />
+            Send Email to Customer
+          </h3>
+          <button onClick={onClose} className="p-2 hover:bg-stone-100 rounded-lg">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-stone-700 mb-2">Email Template</label>
+            <select
+              value={template}
+              onChange={(e) => setTemplate(e.target.value)}
+              className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            >
+              <option value="confirmed">Order Confirmed</option>
+              <option value="shipped">Order Shipped</option>
+              <option value="cancelled">Order Cancelled</option>
+            </select>
+          </div>
+
+          {template === 'shipped' && (
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-2">Tracking Link (Optional)</label>
+              <input
+                type="url"
+                value={trackingLink}
+                onChange={(e) => setTrackingLink(e.target.value)}
+                placeholder="https://tracking.example.com/..."
+                className="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+              />
+            </div>
+          )}
+
+          <div className="bg-stone-50 rounded-lg p-4">
+            <p className="text-sm text-stone-600 mb-2">
+              <strong>Recipient:</strong> {order.customerName} ({order.email})
+            </p>
+            <p className="text-sm text-stone-600">
+              <strong>Order:</strong> {order.orderNumber}
+            </p>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-stone-300 text-stone-700 rounded-lg hover:bg-stone-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSendEmail}
+              disabled={sending}
+              className="flex-1 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {sending ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Mail className="w-4 h-4" />
+                  Send Email
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Order Details Modal
+const OrderDetailsModal = ({ order, onClose, onRefresh }) => {
+  const [showEmailModal, setShowEmailModal] = useState(false);
+
+  if (!order) return null;
+
+  return (
+    <>
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="sticky top-0 bg-white border-b border-stone-200 p-6 flex items-center justify-between">
+            <h2 className="text-xl font-bold">Order Details - {order.orderNumber}</h2>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => toast.info('📧 Email feature coming soon! Stay tuned!')}
+                className="px-4 py-2 bg-gray-400 text-white rounded-lg cursor-not-allowed flex items-center gap-2"
+                title="Coming Soon"
+              >
+                <Mail className="w-4 h-4" />
+                Email (Coming Soon)
+              </button>
+              <button onClick={onClose} className="p-2 hover:bg-stone-100 rounded-lg">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+        <div className="p-6 space-y-6">
+          {/* Customer Information */}
+          <div className="bg-stone-50 rounded-lg p-4">
+            <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+              <Users className="w-5 h-5 text-amber-600" />
+              Customer Information
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs text-stone-500">Customer Name</label>
+                <p className="font-medium text-stone-800">{order.customerName || 'N/A'}</p>
+              </div>
+              <div>
+                <label className="text-xs text-stone-500">Email</label>
+                <p className="font-medium text-stone-800 flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-stone-400" />
+                  {order.email || 'N/A'}
+                </p>
+              </div>
+              <div>
+                <label className="text-xs text-stone-500">Phone</label>
+                <p className="font-medium text-stone-800 flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-stone-400" />
+                  {order.phone || 'N/A'}
+                </p>
+              </div>
+              <div>
+                <label className="text-xs text-stone-500">User ID</label>
+                <p className="font-medium text-stone-800 text-xs">{order.userId}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Shipping Address */}
+          <div className="bg-stone-50 rounded-lg p-4">
+            <h3 className="font-bold text-lg mb-3 flex items-center gap-2">
+              <Package className="w-5 h-5 text-amber-600" />
+              Shipping Address
+            </h3>
+            <div className="space-y-1">
+              <p className="text-stone-800">{order.address1}</p>
+              {order.address2 && <p className="text-stone-800">{order.address2}</p>}
+              <p className="text-stone-800">{order.city}, {order.state} - {order.pincode}</p>
+            </div>
+          </div>
+
+          {/* Order Items */}
+          <div>
+            <h3 className="font-bold text-lg mb-3">Order Items</h3>
+            <div className="space-y-3">
+              {order.items && order.items.map((item, index) => (
+                <div key={index} className="flex items-center gap-4 p-3 bg-stone-50 rounded-lg">
+                  <img 
+                    src={item.image || 'https://via.placeholder.com/60'} 
+                    alt={item.productName}
+                    className="w-16 h-16 object-cover rounded-lg"
+                  />
+                  <div className="flex-1">
+                    <h4 className="font-medium text-stone-800">{item.productName}</h4>
+                    <p className="text-sm text-stone-600">Quantity: {item.quantity}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-amber-600">₹{(item.price * item.quantity).toLocaleString()}</p>
+                    <p className="text-xs text-stone-500">₹{item.price} each</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Order Summary */}
+          <div className="border-t border-stone-200 pt-4">
+            <div className="space-y-2">
+              <div className="flex justify-between text-stone-600">
+                <span>Subtotal</span>
+                <span>₹{order.subtotal?.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-stone-600">
+                <span>GST (5%)</span>
+                <span>₹{order.gst?.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-lg font-bold text-stone-800 pt-2 border-t">
+                <span>Total Amount</span>
+                <span className="text-amber-600">₹{order.totalAmount?.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Order Status */}
+          <div className="bg-amber-50 rounded-lg p-4">
+            <h3 className="font-bold text-lg mb-3">Order Status</h3>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="text-xs text-stone-500">Status</label>
+                <p className={`font-medium px-3 py-1 rounded-full text-sm inline-block ${
+                  order.status === 'delivered' ? 'bg-green-100 text-green-700' :
+                  order.status === 'shipped' ? 'bg-blue-100 text-blue-700' :
+                  order.status === 'processing' ? 'bg-amber-100 text-amber-700' :
+                  order.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+                  'bg-stone-100 text-stone-700'
+                }`}>
+                  {order.status}
+                </p>
+              </div>
+              <div>
+                <label className="text-xs text-stone-500">Payment Method</label>
+                <p className="font-medium text-stone-800">{order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online'}</p>
+              </div>
+              <div>
+                <label className="text-xs text-stone-500">Order Date</label>
+                <p className="font-medium text-stone-800">{new Date(order.$createdAt).toLocaleString()}</p>
+              </div>
+            </div>
+            {order.trackingNumber && (
+              <div className="mt-3">
+                <label className="text-xs text-stone-500">Tracking Number</label>
+                <p className="font-medium text-stone-800">{order.trackingNumber}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      </div>
+
+      {/* Email Modal */}
+      {showEmailModal && (
+        <EmailModal 
+          order={order} 
+          onClose={() => setShowEmailModal(false)}
+          onSuccess={onRefresh}
+        />
+      )}
+    </>
+  );
+};
+
 // Orders Tab
 const OrdersTab = ({ orders, onRefresh }) => {
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [emailOrder, setEmailOrder] = useState(null);
 
   const handleUpdateStatus = async (orderId, newStatus) => {
     const result = await orderService.updateOrderStatus(orderId, newStatus);
@@ -585,7 +872,7 @@ const OrdersTab = ({ orders, onRefresh }) => {
             {orders.map(order => (
               <tr key={order.$id} className="border-b border-stone-100 hover:bg-stone-50">
                 <td className="py-3 px-4 font-medium">{order.orderNumber}</td>
-                <td className="py-3 px-4">{order.userId}</td>
+                <td className="py-3 px-4">{order.customerName || 'Guest'}</td>
                 <td className="py-3 px-4">₹{order.totalAmount.toLocaleString()}</td>
                 <td className="py-3 px-4">
                   <select
@@ -604,19 +891,46 @@ const OrdersTab = ({ orders, onRefresh }) => {
                   {new Date(order.$createdAt).toLocaleDateString()}
                 </td>
                 <td className="py-3 px-4">
-                  <button
-                    onClick={() => setSelectedOrder(order)}
-                    className="text-amber-600 hover:text-amber-700 flex items-center gap-1"
-                  >
-                    <Eye className="w-4 h-4" />
-                    View
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setSelectedOrder(order)}
+                      className="text-amber-600 hover:text-amber-700 flex items-center gap-1"
+                    >
+                      <Eye className="w-4 h-4" />
+                      View
+                    </button>
+                    <button
+                      onClick={() => setEmailOrder(order)}
+                      className="text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                      title="Send Email"
+                    >
+                      <Mail className="w-4 h-4" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* Order Details Modal */}
+      {selectedOrder && (
+        <OrderDetailsModal 
+          order={selectedOrder} 
+          onClose={() => setSelectedOrder(null)}
+          onRefresh={onRefresh}
+        />
+      )}
+
+      {/* Email Modal */}
+      {emailOrder && (
+        <EmailModal 
+          order={emailOrder} 
+          onClose={() => setEmailOrder(null)}
+          onSuccess={onRefresh}
+        />
+      )}
     </div>
   );
 };

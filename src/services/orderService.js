@@ -1,5 +1,5 @@
 // src/services/orderService.js
-import { databases, DATABASE_ID, COLLECTION_IDS, ID } from '../config/appwrite';
+import { databases, DATABASE_ID, COLLECTION_IDS, ID, functions, EMAIL_FUNCTION_ID } from '../config/appwrite';
 import { Query } from 'appwrite';
 
 class OrderService {
@@ -167,6 +167,53 @@ class OrderService {
     }
   }
 
+  // Track order by order number
+  async trackOrderByNumber(orderNumber) {
+    try {
+      const response = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTION_IDS.ORDERS,
+        [
+          Query.equal('orderNumber', orderNumber),
+          Query.limit(1)
+        ]
+      );
+
+      if (response.documents.length === 0) {
+        return {
+          success: false,
+          error: 'Order not found. Please check your order number.'
+        };
+      }
+
+      const order = response.documents[0];
+
+      return {
+        success: true,
+        order: {
+          ...order,
+          items: JSON.parse(order.items),
+          shippingAddress: JSON.parse(order.shippingAddress)
+        }
+      };
+    } catch (error) {
+      console.error('Track order error:', error);
+      
+      // Handle authorization errors
+      if (error.code === 401 || error.message?.includes('authorized')) {
+        return {
+          success: false,
+          error: 'Please login to track your order'
+        };
+      }
+      
+      return {
+        success: false,
+        error: error.message || 'Failed to track order'
+      };
+    }
+  }
+
   // Update order status (admin only)
   async updateOrderStatus(orderId, status, trackingNumber = null) {
     try {
@@ -318,6 +365,144 @@ class OrderService {
         success: true,
         message: 'Email notification queued'
       };
+    } catch (error) {
+      console.error('Send email error:', error);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+
+  // Send custom email to customer
+  async sendCustomEmail(order, template, trackingLink = null) {
+    try {
+      let subject, body;
+
+      switch (template) {
+        case 'confirmed':
+          subject = `Order Confirmed - ${order.orderNumber}`;
+          body = `
+Dear ${order.customerName},
+
+Your order has been confirmed!
+
+Order Details:
+Order ID: ${order.orderNumber}
+Order Date: ${new Date(order.$createdAt).toLocaleDateString()}
+Total Amount: ₹${order.totalAmount.toLocaleString()}
+
+We are processing your order and will notify you when it ships.
+
+Thank you for shopping with Vadi-e-Kashmir!
+
+Best regards,
+Vadi-e-Kashmir Team
+          `;
+          break;
+
+        case 'shipped':
+          subject = `Order Shipped - ${order.orderNumber}`;
+          body = `
+Dear ${order.customerName},
+
+Great news! Your order has been shipped! 📦
+
+Order ID: ${order.orderNumber}
+${trackingLink ? `Tracking Link: ${trackingLink}\n` : ''}
+${order.trackingNumber ? `Tracking Number: ${order.trackingNumber}\n` : ''}
+
+Your order is on its way and should arrive soon.
+
+Shipping Address:
+${order.address1}
+${order.address2 ? order.address2 + '\n' : ''}${order.city}, ${order.state} - ${order.pincode}
+
+Thank you for choosing Vadi-e-Kashmir!
+
+Best regards,
+Vadi-e-Kashmir Team
+          `;
+          break;
+
+        case 'cancelled':
+          subject = `Order Cancelled - ${order.orderNumber}`;
+          body = `
+Dear ${order.customerName},
+
+Your order has been cancelled as requested.
+
+Order ID: ${order.orderNumber}
+Total Amount: ₹${order.totalAmount.toLocaleString()}
+
+If this was not intentional or if you have any questions, please contact our customer support.
+
+We hope to serve you again in the future!
+
+Best regards,
+Vadi-e-Kashmir Team
+          `;
+          break;
+
+        default:
+          return {
+            success: false,
+            error: 'Invalid email template'
+          };
+      }
+
+      const emailData = {
+        to: order.email,
+        subject,
+        body
+      };
+
+      console.log('📧 Sending email via Appwrite Function:', emailData);
+
+      // Send email using Appwrite Function
+      if (EMAIL_FUNCTION_ID) {
+        try {
+          const execution = await functions.createExecution(
+            EMAIL_FUNCTION_ID,
+            JSON.stringify(emailData),
+            false // async execution
+          );
+
+          console.log('✅ Email function executed:', execution);
+
+          return {
+            success: true,
+            message: `${template.charAt(0).toUpperCase() + template.slice(1)} email sent successfully!`
+          };
+        } catch (functionError) {
+          console.error('❌ Appwrite Function error:', functionError);
+          
+          // If function is not set up, provide instructions
+          if (functionError.code === 404 || !EMAIL_FUNCTION_ID) {
+            console.log('\n⚠️  EMAIL FUNCTION NOT CONFIGURED');
+            console.log('📝 To enable email sending with Appwrite:');
+            console.log('   1. Go to your Appwrite Console > Functions');
+            console.log('   2. Create a new function');
+            console.log('   3. Use the email function code provided in APPWRITE_EMAIL_FUNCTION.md');
+            console.log('   4. Add REACT_APP_EMAIL_FUNCTION_ID to your .env file\n');
+            
+            return {
+              success: false,
+              error: 'Email function not configured. Check console for setup instructions.'
+            };
+          }
+          
+          throw functionError;
+        }
+      } else {
+        console.log('\n⚠️  EMAIL FUNCTION ID NOT SET');
+        console.log('📝 Add REACT_APP_EMAIL_FUNCTION_ID to your .env file\n');
+        
+        return {
+          success: false,
+          error: 'Email function ID not configured. Add REACT_APP_EMAIL_FUNCTION_ID to .env file.'
+        };
+      }
     } catch (error) {
       console.error('Send email error:', error);
       return {

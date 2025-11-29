@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import orderService from '../services/orderService';
 
-const CheckoutModal = ({ cart, onClose, onSuccess }) => {
+const CheckoutModal = ({ cart, onClose, onSuccess, user }) => {
   const [checkoutForm, setCheckoutForm] = useState({
     firstName: '',
     lastName: '',
@@ -17,6 +17,14 @@ const CheckoutModal = ({ cart, onClose, onSuccess }) => {
     state: ''
   });
   const [placingOrder, setPlacingOrder] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
+  // Check if user is logged in on mount
+  React.useEffect(() => {
+    if (!user) {
+      setShowLoginPrompt(true);
+    }
+  }, [user]);
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const gst = Math.round(subtotal * 0.05);
@@ -30,6 +38,13 @@ const CheckoutModal = ({ cart, onClose, onSuccess }) => {
   };
 
   const handlePlaceOrder = async () => {
+    // Check if user is logged in first
+    if (!user) {
+      toast.error('Please login to place an order');
+      setShowLoginPrompt(true);
+      return;
+    }
+
     // Validate form
     if (!checkoutForm.firstName || !checkoutForm.lastName) {
       toast.error('Please enter your full name');
@@ -77,7 +92,7 @@ const CheckoutModal = ({ cart, onClose, onSuccess }) => {
         gst: gst,
         total: total,
         paymentMethod: 'cod',
-        userId: 'guest',
+        userId: user?.$id || user?.id || 'guest',
         createdAt: new Date().toISOString()
       };
 
@@ -113,6 +128,42 @@ const CheckoutModal = ({ cart, onClose, onSuccess }) => {
       setPlacingOrder(false);
     }
   };
+
+  // Show login prompt if user is not logged in
+  if (showLoginPrompt || !user) {
+    return (
+      <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full p-8 text-center">
+          <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-stone-800 mb-3">Login Required</h2>
+          <p className="text-stone-600 mb-6">
+            Please login to your account to place an order and track your purchases.
+          </p>
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 px-6 py-3 border-2 border-stone-300 text-stone-700 rounded-xl hover:bg-stone-50 font-medium transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                onClose();
+                window.location.hash = '#login';
+              }}
+              className="flex-1 px-6 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-xl hover:from-amber-700 hover:to-amber-800 font-semibold shadow-lg hover:shadow-xl transition-all"
+            >
+              Login Now
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
