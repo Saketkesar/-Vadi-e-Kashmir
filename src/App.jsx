@@ -6,6 +6,8 @@ import {
 } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
+import { ArrowLeft } from "react-feather";
+
 
 // Import Appwrite services
 import authService from './services/authService';
@@ -1229,46 +1231,233 @@ export default function App() {
         {/* TRACK ORDER PAGE */}
         {view === 'track' && <TrackOrderPage />}
 
-        {/* ABOUT PAGE */}
-        {view === 'about' && (
-          <section className="py-20 bg-stone-50 min-h-screen">
-            <div className="container mx-auto px-4 md:px-6 max-w-5xl">
-              <SectionTitle title="Our Story" subtitle="Bringing authentic Kashmiri craftsmanship to the world" />
-              
-              <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12 mb-8">
-                <h3 className="text-2xl font-bold text-stone-800 mb-4">The Promise of Authenticity</h3>
-                <p className="text-stone-600 leading-relaxed mb-4">
-                  Vadi-e-Kashmir was born from a deep reverence for the artisans of Kashmir and their centuries-old traditions. 
-                  Every product on our platform is carefully verified, GI-tagged when applicable, and sourced directly from 
-                  trusted artisans and cooperatives in Srinagar and surrounding regions.
-                </p>
-                <p className="text-stone-600 leading-relaxed">
-                  We're committed to fair trade practices, ensuring that the creators of these beautiful products receive 
-                  the recognition and compensation they deserve.
-                </p>
-              </div>
+       {/* --- OPTIONAL: add this small SectionTitle above the block if your app does not already provide one --- */}
+{/*
+const SectionTitle = ({ title, subtitle }) => (
+  <div className="mb-8">
+    <p className="text-sm uppercase text-amber-700 font-semibold tracking-wider">{subtitle}</p>
+    <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 mt-2">{title}</h2>
+  </div>
+);
+*/}
 
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="bg-amber-50 rounded-xl p-6">
-                  <h4 className="text-xl font-bold text-stone-800 mb-3">Our Mission</h4>
-                  <p className="text-stone-600">
-                    To preserve and promote the authentic craftsmanship of Kashmir while supporting the livelihoods 
-                    of artisan families through fair and transparent business practices.
-                  </p>
-                </div>
-                <div className="bg-amber-50 rounded-xl p-6">
-                  <h4 className="text-xl font-bold text-stone-800 mb-3">Our Values</h4>
-                  <ul className="text-stone-600 space-y-2">
-                    <li>✓ 100% Authentic Products</li>
-                    <li>✓ Fair Trade Practices</li>
-                    <li>✓ Sustainable Sourcing</li>
-                    <li>✓ Artisan Empowerment</li>
-                  </ul>
-                </div>
-              </div>
+{/* ABOUT PAGE */}
+{view === 'about' && (
+  <section className="py-20 bg-gradient-to-b from-stone-50 to-stone-100 min-h-screen">
+    <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+      {/* Back + small trusted badge */}
+      <div className="mb-8 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => (window.location.hash = '#home')}
+            className="inline-flex items-center gap-2 text-stone-700 hover:text-stone-900 transition"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span className="font-medium">Back to Home</span>
+          </button>
+        </div>
+
+        <div className="hidden md:flex items-center gap-3">
+          <span className="text-sm text-stone-500">Trusted by artisans • Fair trade • Authentic</span>
+          <div className="px-3 py-2 bg-amber-50 rounded-lg border border-amber-100 text-amber-800 font-semibold">
+            GI-tagged products where applicable
+          </div>
+        </div>
+      </div>
+
+      {/* Title: reuse your SectionTitle if available */}
+      <SectionTitle
+        title="Our Story"
+        subtitle="Bringing authentic Kashmiri craftsmanship to the world"
+      />
+
+      {/* Hero */}
+      <div className="bg-white rounded-3xl shadow-2xl overflow-hidden grid md:grid-cols-2 gap-6 mb-10">
+        <div className="p-8 md:p-12 flex flex-col justify-center">
+          <h3 className="text-2xl md:text-3xl font-extrabold text-stone-900 mb-4">
+            The Promise of Authenticity
+          </h3>
+          <p className="text-stone-600 leading-relaxed mb-4">
+            Vadi-e-Kashmir began with a simple belief: the hands that create should be honoured and supported.
+            We travel to villages, meet artisans, and onboard only those who meet our authenticity checks — preserving
+            craft, not exploiting it.
+          </p>
+          <p className="text-stone-600 leading-relaxed mb-4">
+            Every piece is traceable. Every purchase puts money directly into artisan pockets — helping families, funding
+            training, and keeping centuries-old techniques alive.
+          </p>
+
+          <div className="mt-9 flex justify-center">
+  <a
+    href="#shop"
+    className="inline-flex items-center justify-center rounded-xl bg-amber-700 hover:bg-amber-800 text-white px-6 py-2 font-semibold shadow"
+  >
+    Shop Authentic
+  </a>
+</div>
+
+        </div>
+
+        <div className="relative min-h-[320px]">
+          {/* replace these URLs with your own images for best results */}
+          <img
+            src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop"
+            alt="Kashmir valley - artisan craft"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute left-6 bottom-6 bg-white/90 backdrop-blur-sm p-4 rounded-xl flex items-center gap-3 shadow-md">
+            <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop" alt="product" className="w-16 h-16 object-cover rounded-md" />
+            <div>
+              <div className="text-sm text-stone-600">Handpicked & Verified</div>
+              <div className="font-semibold text-stone-900">Pashmina & Handlooms</div>
             </div>
-          </section>
-        )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mission & Values */}
+      <div className="grid md:grid-cols-3 gap-6 mb-10">
+        <div className="bg-amber-50 rounded-2xl p-6 shadow-sm border-l-4 border-amber-600">
+          <h4 className="text-xl font-bold text-stone-900 mb-3">Our Mission</h4>
+          <p className="text-stone-600">
+            Preserve Kashmiri craft, create sustainable livelihoods for artisans, and connect their work with
+            respectful, global customers.
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
+          <h4 className="text-xl font-bold text-stone-900 mb-3">Our Values</h4>
+          <ul className="text-stone-600 space-y-2">
+            <li>✓ 100% authenticity & traceability</li>
+            <li>✓ Fair pricing & timely payments</li>
+            <li>✓ Sustainable sourcing & minimal intermediaries</li>
+            <li>✓ Empowering artisan communities</li>
+          </ul>
+        </div>
+
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
+          <h4 className="text-xl font-bold text-stone-900 mb-3">How We Help</h4>
+          <p className="text-stone-600">
+            We reduce intermediaries, provide quality checks, facilitate fair pricing, and bring artisan stories
+            to buyers who care.
+          </p>
+        </div>
+      </div>
+
+      {/* Artisan Stories */}
+      <div id="stories" className="mb-10">
+        <h3 className="text-2xl font-extrabold text-stone-900 mb-4">Artisan Stories</h3>
+        <p className="text-stone-600 leading-relaxed mb-6">
+          Every product carries a human story — a family, a tradition, a skill taught across generations. Below are
+          a few of the hands behind the creations.
+        </p>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          <article className="bg-white rounded-2xl shadow p-4 border border-stone-100">
+            <img src="https://images.unsplash.com/photo-1543163521-1bf539c55d0a?q=80&w=1200&auto=format&fit=crop" alt="artisan weaving" className="w-full h-40 object-cover rounded-lg mb-4" />
+            <h4 className="font-semibold text-stone-900 mb-2">Asha — Weaver</h4>
+            <p className="text-stone-600 text-sm">
+              Asha learned weaving from her mother. She weaves delicate motifs by hand — every shawl can take days
+              of meticulous attention.
+            </p>
+          </article>
+
+          <article className="bg-white rounded-2xl shadow p-4 border border-stone-100">
+            <img src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=1200&auto=format&fit=crop" alt="workshop" className="w-full h-40 object-cover rounded-lg mb-4" />
+            <h4 className="font-semibold text-stone-900 mb-2">Iqbal — Dyer</h4>
+            <p className="text-stone-600 text-sm">
+              Iqbal uses natural dyes passed down generations. His colors carry seasonal stories — the warmth of autumn,
+              the cool of the river.
+            </p>
+          </article>
+
+          <article className="bg-white rounded-2xl shadow p-4 border border-stone-100">
+            <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop" alt="product closeup" className="w-full h-40 object-cover rounded-lg mb-4" />
+            <h4 className="font-semibold text-stone-900 mb-2">Handcrafted Excellence</h4>
+            <p className="text-stone-600 text-sm">
+              From fine Pashmina to intricate embroidery, each piece is inspected and authenticated before it reaches you.
+            </p>
+          </article>
+        </div>
+      </div>
+
+     
+
+      {/* Impact & Trust */}
+      <div className="bg-white rounded-2xl shadow p-6 md:p-8 border border-stone-100 mb-10">
+        <div className="md:flex md:items-center md:justify-between gap-6">
+          <div>
+            <h3 className="text-2xl font-extrabold text-stone-900 mb-2">Our Impact</h3>
+            <p className="text-stone-600 leading-relaxed">
+              Since day one, every order has directly contributed to artisan earnings, training programs, and local
+              micro-investments. We reinvest a portion of profits to improve working conditions and supply chains.
+            </p>
+          </div>
+
+          <div className="mt-6 md:mt-0 flex gap-4">
+            <div className="text-center px-4 py-3 bg-amber-50 rounded-lg">
+              <div className="text-2xl font-extrabold text-amber-800">100+</div>
+              <div className="text-sm text-stone-600">Artisans Onboarded</div>
+            </div>
+            <div className="text-center px-4 py-3 bg-amber-50 rounded-lg">
+              <div className="text-2xl font-extrabold text-amber-800">₹00,000+</div>
+              <div className="text-sm text-stone-600">Paid to Artisans</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Founders Note + Important Notice */}
+      <div className="bg-amber-50 rounded-2xl p-6 md:p-8 border-l-4 border-amber-600 shadow-sm mb-8">
+        <div className="md:flex items-start gap-6">
+          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop" alt="founders" className="w-28 h-28 object-cover rounded-lg shadow-md flex-shrink-0" />
+          <div>
+            <h3 className="text-2xl font-extrabold text-stone-900 mb-2">Why we started</h3>
+            <p className="text-stone-700 leading-relaxed mb-4">
+              This project was started by <strong>two young second-year college students</strong> from Jammu & Kashmir,
+              who grew up watching local artisans work tirelessly. They launched Vadi-e-Kashmir because they believe these
+              traditions deserve a wider audience and fair compensation.
+            </p>
+
+            <p className="text-stone-700 leading-relaxed">
+              Every piece you buy helps a family, supports local schools, and keeps a cultural legacy alive. Your trust means everything to us — we promise to honour it with transparency and heart.
+            </p>
+
+            <div className="mt-4 p-4 bg-white rounded-lg border border-stone-100">
+              <p className="font-semibold text-stone-900">
+                <span className="text-red-700">Important:</span> For our first few orders we will accept <strong>non-COD (prepaid)</strong> payments only.
+                We do not yet have sufficient funds to support cash-on-delivery logistics. <strong>Cash-on-delivery will be added soon</strong> as we scale.
+              </p>
+
+              <p className="text-sm text-stone-600 mt-3">Thank you for your understanding and for trusting us with the work of Kashmir's artisans.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Footer */}
+      <div className="mt-10 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h4 className="text-lg font-bold text-stone-900">Join our journey</h4>
+          <p className="text-stone-600">Follow us to meet more artisans and learn about upcoming collections and collaborations.</p>
+        </div>
+        <div className="flex gap-3">
+          <a href="#subscribe" className="inline-flex items-center justify-center rounded-xl bg-amber-700 hover:bg-amber-800 text-white px-6 py-3 font-semibold shadow">
+            Subscribe
+          </a>
+          <a href="#shop" className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-6 py-3 font-semibold hover:shadow">
+            Shop Now
+          </a>
+        </div>
+      </div>
+
+      <div className="mt-8 text-center text-sm text-stone-500">
+        © {new Date().getFullYear()} Vadi-e-Kashmir — Preserving craft, empowering communities.
+      </div>
+    </div>
+  </section>
+)}
+
 
         {/* BLOGS PAGE */}
         {view === 'blogs' && <BlogList />}
@@ -1374,10 +1563,20 @@ export default function App() {
                   Srinagar, J&K 190001
                 </span>
               </li>
-              <li className="flex items-start gap-3">
-                <Phone size={18} className="text-amber-600 mt-1 flex-shrink-0" />
-                <span>+91 79797472200</span>
-              </li>
+<li className="flex items-start gap-3">
+  <Phone size={18} className="text-amber-500 mt-1 flex-shrink-0" />
+  <div className="flex flex-col gap-1">
+    <a href="tel:+9179797472200" className="text-white font-medium hover:underline">
+      +91 79797 47220
+    </a>
+    <a href="tel:+917006425508" className="text-white font-medium hover:underline">
+      +91 70064 25508
+    </a>
+  </div>
+</li>
+
+
+
               <li className="flex items-start gap-3">
                 <Mail size={18} className="text-amber-600 mt-1 flex-shrink-0" />
                 <span>hello@vadiekashmir.com</span>
