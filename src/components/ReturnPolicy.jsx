@@ -31,7 +31,7 @@ const ReturnPolicy = () => {
               <h2 className="text-2xl font-bold text-stone-800">Our Return Policy</h2>
             </div>
             <p className="text-stone-600 leading-relaxed">
-              At Vadi-e-Kashmir, customer satisfaction is our priority. We understand that sometimes products may not meet your expectations. This policy outlines our return and refund process.
+              At Vadiekashmir, customer satisfaction is our priority. We understand that sometimes products may not meet your expectations. This policy outlines our return and refund process.
             </p>
           </section>
 
@@ -42,7 +42,7 @@ const ReturnPolicy = () => {
               <div>
                 <h3 className="text-xl font-bold text-amber-900 mb-2">Third-Party Marketplace Returns</h3>
                 <p className="text-amber-800 leading-relaxed mb-3">
-                  Vadi-e-Kashmir is a <strong>third-party marketplace platform</strong>. Returns are handled by individual vendors according to their policies. We facilitate the return process and mediate disputes, but the final decision rests with the vendor.
+                  Vadiekashmir is a <strong>third-party marketplace platform</strong>. Returns are handled by individual vendors according to their policies. We facilitate the return process and mediate disputes, but the final decision rests with the vendor.
                 </p>
                 <p className="text-amber-800 leading-relaxed">
                   <strong>Important:</strong> Return policies may vary by vendor and product type. Please review the specific vendor's policy on the product page before making a purchase.

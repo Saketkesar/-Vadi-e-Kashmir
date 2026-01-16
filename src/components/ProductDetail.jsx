@@ -100,7 +100,7 @@ const ProductDetail = ({ productSlug, onClose, onAddToCart }) => {
 
   const handleShare = (platform) => {
     const url = window.location.href;
-    const text = `Check out ${product.name} on Vadi-e-Kashmir`;
+    const text = `Check out ${product.name} on Vadiekashmir`;
     
     const shareUrls = {
       facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,

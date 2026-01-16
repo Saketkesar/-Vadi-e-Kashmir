@@ -33,7 +33,7 @@ class PaymentService {
         key: this.razorpayKeyId,
         amount: orderDetails.amount * 100, // Convert to paise (₹1 = 100 paise)
         currency: 'INR',
-        name: 'Vadi-e-Kashmir',
+        name: 'Vadiekashmir',
         description: `Order #${orderDetails.orderNumber}`,
         image: '/logo192.png', // Your logo
         order_id: orderDetails.razorpayOrderId, // Optional: if you create order on backend

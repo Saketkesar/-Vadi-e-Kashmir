@@ -165,10 +165,8 @@ const AuthPage = ({ onSuccess = () => {} }) => {
         >
           <div className="absolute inset-0 bg-gradient-to-br from-stone-900/80 to-amber-900/80 rounded-t-2xl flex items-center justify-center">
             <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-700 rounded-2xl shadow-2xl flex items-center justify-center mx-auto mb-2">
-                <span className="text-2xl font-serif text-white">V</span>
-              </div>
-              <h1 className="text-xl font-serif text-white">Vadi-e-Kashmir</h1>
+              <img src="/vadielogo.png" alt="Vadiekashmir Logo" className="w-16 h-16 rounded-2xl shadow-2xl mx-auto mb-2 object-contain bg-white" />
+              <h1 className="text-xl font-serif text-white">Vadiekashmir</h1>
             </div>
           </div>
         </div>
@@ -205,7 +203,7 @@ const AuthPage = ({ onSuccess = () => {} }) => {
                   <input
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="9797472200"
+                    placeholder="9876543210"
                     type="tel"
                     className="w-full pl-14 pr-4 py-3 border-2 border-stone-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all"
                     required
@@ -933,7 +931,7 @@ export default function App() {
       <div className="min-h-screen flex items-center justify-center bg-stone-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-700 mx-auto mb-4"></div>
-          <p className="text-stone-600">Loading Vadi-e-Kashmir...</p>
+          <p className="text-stone-600">Loading Vadiekashmir...</p>
         </div>
       </div>
     );
@@ -949,11 +947,9 @@ export default function App() {
       <header className="sticky top-0 z-30 bg-white shadow-sm border-b border-stone-200">
         <div className="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
           <button onClick={() => navigateTo('home')} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 bg-amber-700 text-white rounded-lg flex items-center justify-center font-bold text-lg">
-              V
-            </div>
+            <img src="/vadielogo.png" alt="Vadiekashmir Logo" className="w-10 h-10 rounded-lg object-contain" />
             <div>
-              <h1 className="text-xl md:text-2xl font-bold text-stone-800">Vadi-e-Kashmir</h1>
+              <h1 className="text-xl md:text-2xl font-bold text-stone-800">Vadiekashmir</h1>
               <p className="text-xs text-stone-500 hidden md:block">KASHMIR TREASURES</p>
             </div>
           </button>
@@ -1196,7 +1192,7 @@ export default function App() {
               </div>
               <div className="relative z-10 text-center text-white px-6 max-w-4xl mx-auto">
                 <h2 className="text-5xl md:text-6xl font-bold mb-6">
-                  Vadi-e-Kashmir
+                  Vadiekashmir
                 </h2>
                 <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
                   Authentic Kashmir Products - Saffron, Dry Fruits, and Handcrafted Treasures
@@ -1364,7 +1360,7 @@ const SectionTitle = ({ title, subtitle }) => (
             The Promise of Authenticity
           </h3>
           <p className="text-stone-600 leading-relaxed mb-4">
-            Vadi-e-Kashmir began with a simple belief: the hands that create should be honoured and supported.
+            Vadiekashmir began with a simple belief: the hands that create should be honoured and supported.
             We travel to villages, meet artisans, and onboard only those who meet our authenticity checks — preserving
             craft, not exploiting it.
           </p>
@@ -1480,16 +1476,7 @@ const SectionTitle = ({ title, subtitle }) => (
             </p>
           </div>
 
-          <div className="mt-6 md:mt-0 flex gap-4">
-            <div className="text-center px-4 py-3 bg-amber-50 rounded-lg">
-              <div className="text-2xl font-extrabold text-amber-800">100+</div>
-              <div className="text-sm text-stone-600">Artisans Onboarded</div>
-            </div>
-            <div className="text-center px-4 py-3 bg-amber-50 rounded-lg">
-              <div className="text-2xl font-extrabold text-amber-800">₹00,000+</div>
-              <div className="text-sm text-stone-600">Paid to Artisans</div>
-            </div>
-          </div>
+
         </div>
       </div>
 
@@ -1501,7 +1488,7 @@ const SectionTitle = ({ title, subtitle }) => (
             <h3 className="text-2xl font-extrabold text-stone-900 mb-2">Why we started</h3>
             <p className="text-stone-700 leading-relaxed mb-4">
               This project was started by <strong>two young second-year college students</strong> from Jammu & Kashmir,
-              who grew up watching local artisans work tirelessly. They launched Vadi-e-Kashmir because they believe these
+              who grew up watching local artisans work tirelessly. They launched Vadiekashmir because they believe these
               traditions deserve a wider audience and fair compensation.
             </p>
 
@@ -1538,7 +1525,7 @@ const SectionTitle = ({ title, subtitle }) => (
       </div>
 
       <div className="mt-8 text-center text-sm text-stone-500">
-        © {new Date().getFullYear()} Vadi-e-Kashmir — Preserving craft, empowering communities.
+        © {new Date().getFullYear()} Vadiekashmir — Preserving craft, empowering communities.
       </div>
     </div>
   </section>
@@ -1597,7 +1584,7 @@ const SectionTitle = ({ title, subtitle }) => (
       <footer className="bg-stone-900 text-stone-400 py-16 border-t border-stone-800">
         <div className="container mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
           <div>
-            <h2 className="font-serif text-2xl text-white mb-6">Vadi-e-Kashmir</h2>
+            <h2 className="font-serif text-2xl text-white mb-6">Vadiekashmir</h2>
             <p className="text-sm mb-6">
               Bringing the rarest treasures of the Himalayas to the world. Authentic, ethical, premium.
             </p>
@@ -1676,7 +1663,7 @@ const SectionTitle = ({ title, subtitle }) => (
         </div>
 
         <div className="container mx-auto px-4 md:px-6 mt-12 pt-8 border-t border-stone-800 text-center text-xs">
-          <p>&copy; {new Date().getFullYear()} Vadi-e-Kashmir. All Rights Reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Vadiekashmir. All Rights Reserved.</p>
         </div>
       </footer>
 

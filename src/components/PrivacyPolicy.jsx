@@ -52,7 +52,7 @@ const PrivacyPolicy = () => {
               <div>
                 <h2 className="text-2xl font-extrabold text-stone-900 mb-2">Introduction</h2>
                 <p className="text-stone-600 leading-relaxed">
-                  Vadi-e-Kashmir ("we," "our," or "us") operates as a <strong>third-party marketplace platform</strong> connecting customers with authentic Kashmir product vendors. We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.
+                  Vadiekashmir ("we," "our," or "us") operates as a <strong>third-party marketplace platform</strong> connecting customers with authentic Kashmir product vendors. We are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.
                 </p>
               </div>
             </div>
@@ -112,7 +112,7 @@ const PrivacyPolicy = () => {
               <div>
                 <h3 className="text-lg font-bold text-amber-900 mb-2">Important: Third-Party Marketplace</h3>
                 <p className="text-amber-800 leading-relaxed">
-                  Vadi-e-Kashmir operates as a <strong>third-party marketplace platform</strong>. We list products from various independent vendors and artisans. When you make a purchase, your information is shared with the relevant vendor to fulfill your order. Each vendor may have their own privacy practices, and we encourage you to review their policies as well.
+                  Vadiekashmir operates as a <strong>third-party marketplace platform</strong>. We list products from various independent vendors and artisans. When you make a purchase, your information is shared with the relevant vendor to fulfill your order. Each vendor may have their own privacy practices, and we encourage you to review their policies as well.
                 </p>
               </div>
             </div>

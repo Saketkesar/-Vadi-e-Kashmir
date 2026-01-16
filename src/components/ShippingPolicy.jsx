@@ -53,7 +53,7 @@ const ShippingPolicy = () => {
               <div>
                 <h2 className="text-2xl font-extrabold text-stone-900 mb-2">Shipping Overview</h2>
                 <p className="text-stone-600 leading-relaxed">
-                  At Vadi-e-Kashmir, we work with multiple vendors across Kashmir to bring you authentic products. This shipping policy outlines how orders are processed and delivered.
+                  At Vadiekashmir, we work with multiple vendors across Kashmir to bring you authentic products. This shipping policy outlines how orders are processed and delivered.
                 </p>
               </div>
             </div>
@@ -66,7 +66,7 @@ const ShippingPolicy = () => {
               <div>
                 <h3 className="text-xl font-bold text-amber-900 mb-2">Third-Party Marketplace Shipping</h3>
                 <p className="text-amber-800 leading-relaxed mb-3">
-                  Vadi-e-Kashmir is a <strong>third-party marketplace platform</strong>. We do not directly handle shipping of products. Each order is fulfilled by the respective vendor from their location in Kashmir.
+                  Vadiekashmir is a <strong>third-party marketplace platform</strong>. We do not directly handle shipping of products. Each order is fulfilled by the respective vendor from their location in Kashmir.
                 </p>
                 <p className="text-amber-800 leading-relaxed">
                   <strong>Important:</strong> Shipping times, methods, and policies may vary by vendor. We facilitate the connection and monitor the process, but vendors are responsible for packaging and dispatching products.

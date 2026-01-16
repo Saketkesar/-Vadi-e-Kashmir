@@ -323,7 +323,7 @@ class OrderService {
         body: `
           Dear ${orderData.customerName},
           
-          Thank you for your order from Vadi-e-Kashmir!
+          Thank you for your order from Vadiekashmir!
           
           Order Details:
           Order ID: ${orderData.orderNumber}
@@ -349,7 +349,7 @@ class OrderService {
           Thank you for shopping with us!
           
           Best regards,
-          Vadi-e-Kashmir Team
+          Vadiekashmir Team
         `
       };
 
@@ -394,10 +394,10 @@ Total Amount: ₹${order.totalAmount.toLocaleString()}
 
 We are processing your order and will notify you when it ships.
 
-Thank you for shopping with Vadi-e-Kashmir!
+Thank you for shopping with Vadiekashmir!
 
 Best regards,
-Vadi-e-Kashmir Team
+Vadiekashmir Team
           `;
           break;
 
@@ -418,10 +418,10 @@ Shipping Address:
 ${order.address1}
 ${order.address2 ? order.address2 + '\n' : ''}${order.city}, ${order.state} - ${order.pincode}
 
-Thank you for choosing Vadi-e-Kashmir!
+Thank you for choosing Vadiekashmir!
 
 Best regards,
-Vadi-e-Kashmir Team
+Vadiekashmir Team
           `;
           break;
 
@@ -440,7 +440,7 @@ If this was not intentional or if you have any questions, please contact our cus
 We hope to serve you again in the future!
 
 Best regards,
-Vadi-e-Kashmir Team
+Vadiekashmir Team
           `;
           break;
 

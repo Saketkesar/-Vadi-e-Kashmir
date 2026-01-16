@@ -43,7 +43,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
             <ShieldCheck className="w-12 h-12 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">Admin Portal</h1>
-          <p className="text-stone-300">Vadi-e-Kashmir Management</p>
+          <p className="text-stone-300">Vadiekashmir Management</p>
         </div>
 
         {/* Login Form */}
@@ -61,7 +61,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@vadikashmir.com"
+                  placeholder="admin@example.com"
                   className="w-full pl-11 pr-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
                 />
               </div>

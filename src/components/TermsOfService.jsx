@@ -54,7 +54,7 @@ const TermsOfService = () => {
               <div>
                 <h2 className="text-2xl font-extrabold text-stone-900 mb-2">Agreement to Terms</h2>
                 <p className="text-stone-600 leading-relaxed">
-                  Welcome to <span className="font-semibold">Vadi-e-Kashmir</span>. By accessing or using our platform, you agree to be bound by these Terms of Service. Please read them carefully before using our services.
+                  Welcome to <span className="font-semibold">Vadiekashmir</span>. By accessing or using our platform, you agree to be bound by these Terms of Service. Please read them carefully before using our services.
                 </p>
               </div>
             </div>
@@ -67,7 +67,7 @@ const TermsOfService = () => {
               <div>
                 <h3 className="text-xl font-bold text-amber-900 mb-2">Third-Party Marketplace Platform</h3>
                 <p className="text-amber-800 leading-relaxed mb-3">
-                  Vadi-e-Kashmir operates as a <strong>third-party marketplace platform</strong>. We connect customers with independent vendors and artisans who list their authentic Kashmir products on our platform.
+                  Vadiekashmir operates as a <strong>third-party marketplace platform</strong>. We connect customers with independent vendors and artisans who list their authentic Kashmir products on our platform.
                 </p>
                 <p className="text-amber-800 leading-relaxed">
                   <strong>Important:</strong> We are <u>not</u> the seller of the products. Each product is sold directly by the respective vendor. We facilitate the transaction but do not own, manufacture, or warehouse the products listed on our platform.
@@ -195,7 +195,7 @@ const TermsOfService = () => {
           <section className="bg-white rounded-2xl shadow-lg p-6 border border-stone-100">
             <h2 className="text-2xl font-bold text-stone-900 mb-4">6. Intellectual Property</h2>
             <p className="text-stone-600 leading-relaxed">
-              All content on this platform, including text, graphics, logos, images, and software, is owned by Vadi-e-Kashmir or our vendors and is protected by intellectual property laws. You may not reproduce, distribute, or create derivative works without written permission.
+              All content on this platform, including text, graphics, logos, images, and software, is owned by Vadiekashmir or our vendors and is protected by intellectual property laws. You may not reproduce, distribute, or create derivative works without written permission.
             </p>
           </section>
 
@@ -205,7 +205,7 @@ const TermsOfService = () => {
               <AlertTriangle className="w-7 h-7 text-amber-600 flex-shrink-0" />
               <h2 className="text-2xl font-bold text-stone-900">7. Limitation of Liability</h2>
             </div>
-            <p className="text-stone-600 leading-relaxed mb-3">As a marketplace platform, Vadi-e-Kashmir:</p>
+            <p className="text-stone-600 leading-relaxed mb-3">As a marketplace platform, Vadiekashmir:</p>
             <ul className="list-disc list-inside text-stone-600 space-y-2 ml-4">
               <li>Is not liable for product quality, safety, or legality</li>
               <li>Does not guarantee product availability or delivery times</li>
