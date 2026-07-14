@@ -148,14 +148,17 @@ class EmailService {
     `;
   }
 
-  // Send welcome email to customer
+  // Send welcome email to customer (using order_confirmation workaround for Appwrite compatibility)
   async sendWelcomeEmail(userData) {
     try {
       const execution = await functions.createExecution(
         EMAIL_FUNCTION_ID,
         JSON.stringify({
-          type: 'welcome_email',
-          userData: userData,
+          type: 'order_confirmation',
+          orderData: {
+            email: userData.email,
+            customerName: userData.name || 'Valued Customer'
+          },
           htmlBody: this.compileWelcomeEmail(userData)
         }),
         false
