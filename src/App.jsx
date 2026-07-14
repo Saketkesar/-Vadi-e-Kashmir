@@ -822,6 +822,12 @@ export default function App() {
   // Handle hash navigation
   useEffect(() => {
     const handleHashChange = () => {
+      // If we have a non-root pathname (e.g. /fhdfh or /about), rewrite it locally to hash navigation
+      if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
+        const cleanPath = window.location.pathname.replace(/^\//, '');
+        window.history.replaceState(null, '', `/#${cleanPath}`);
+      }
+
       const hash = window.location.hash.replace('#', '') || 'home';
       
       // Handle different routes
