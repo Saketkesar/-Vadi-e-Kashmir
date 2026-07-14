@@ -4,6 +4,40 @@ import { databases, DATABASE_ID, COLLECTION_IDS } from '../config/appwrite';
 import { Query } from 'appwrite';
 
 class AuthService {
+  constructor() {
+    this.sessionPromise = null;
+  }
+
+  // Ensure the user has an Appwrite session (creates anonymous session if none exists)
+  async ensureSession() {
+    if (this.sessionPromise) {
+      return this.sessionPromise;
+    }
+
+    this.sessionPromise = (async () => {
+      try {
+        const user = await account.get();
+        return { success: true, user };
+      } catch (e) {
+        try {
+          const session = await account.createAnonymousSession();
+          return { success: true, session };
+        } catch (err) {
+          // If session is already active, consider it a success
+          if (err.message?.includes('prohibited') || err.code === 400) {
+            return { success: true };
+          }
+          console.error('Failed to create anonymous session:', err);
+          return { success: false, error: err.message };
+        }
+      } finally {
+        this.sessionPromise = null;
+      }
+    })();
+
+    return this.sessionPromise;
+  }
+
   // Create phone session (send OTP)
   async sendOTP(phoneNumber) {
     try {
@@ -32,6 +66,11 @@ class AuthService {
   // Verify OTP and create session
   async verifyOTP(userId, otp) {
     try {
+      try {
+        await account.deleteSession('current');
+      } catch (e) {
+        // Ignore
+      }
       const session = await account.createSession(userId, otp);
       
       // Get user details
@@ -57,6 +96,11 @@ class AuthService {
   // Admin email/password login
   async loginWithEmail(email, password) {
     try {
+      try {
+        await account.deleteSession('current');
+      } catch (e) {
+        // Ignore
+      }
       const session = await account.createEmailPasswordSession(email, password);
       
       // Get user details
@@ -136,37 +180,40 @@ class AuthService {
         isAdmin: false
       };
 
-      // Try to create user, if exists, update
+      let isNew = false;
       try {
-        await databases.createDocument(
+        const existingUsers = await databases.listDocuments(
           DATABASE_ID,
           COLLECTION_IDS.USERS,
-          ID.unique(),
-          userData
+          [Query.equal('userId', authUser.$id)]
         );
-      } catch (error) {
-        if (error.code === 409) {
+
+        if (existingUsers.documents.length > 0) {
           // User exists, update instead
-          const users = await databases.listDocuments(
+          await databases.updateDocument(
             DATABASE_ID,
             COLLECTION_IDS.USERS,
-            [`userId=${authUser.$id}`]
+            existingUsers.documents[0].$id,
+            userData
           );
-          
-          if (users.documents.length > 0) {
-            await databases.updateDocument(
-              DATABASE_ID,
-              COLLECTION_IDS.USERS,
-              users.documents[0].$id,
-              userData
-            );
-          }
+        } else {
+          // Create new user
+          await databases.createDocument(
+            DATABASE_ID,
+            COLLECTION_IDS.USERS,
+            ID.unique(),
+            userData
+          );
+          isNew = true;
         }
+      } catch (error) {
+        console.error('Error syncing user document:', error);
       }
 
       return {
         success: true,
-        user: userData
+        user: userData,
+        isNew
       };
     } catch (error) {
       console.error('Create/Update user error:', error);

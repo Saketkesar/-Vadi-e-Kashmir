@@ -3,10 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { Star, ShoppingCart, Heart, Share2, Truck, ShieldCheck, ArrowLeft, Plus, Minus, Check, X, Facebook, Twitter, Mail, Link as LinkIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useUser } from '@clerk/clerk-react';
 import productService from '../services/productService';
 import orderService from '../services/orderService';
 
-const ProductDetail = ({ productSlug, onClose, onAddToCart }) => {
+const ProductDetail = ({ productSlug, onClose, onAddToCart, onBuyNow }) => {
+  const { user: clerkUser, isLoaded, isSignedIn } = useUser();
+  const [hasPurchased, setHasPurchased] = useState(false);
+  const [checkingPurchase, setCheckingPurchase] = useState(false);
   const [product, setProduct] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,6 +46,33 @@ const ProductDetail = ({ productSlug, onClose, onAddToCart }) => {
     }
   }, [slug]);
 
+  useEffect(() => {
+    if (product && isSignedIn && clerkUser) {
+      checkUserPurchase();
+    } else {
+      setHasPurchased(false);
+    }
+  }, [product, isSignedIn, clerkUser]);
+
+  const checkUserPurchase = async () => {
+    if (!product || !clerkUser) return;
+    setCheckingPurchase(true);
+    try {
+      const result = await orderService.getUserOrders(clerkUser.id);
+      if (result.success && result.orders) {
+        const purchased = result.orders.some(order => {
+          const items = order.items || [];
+          return items.some(item => item.productId === product.$id);
+        });
+        setHasPurchased(purchased);
+      }
+    } catch (e) {
+      console.error('Failed to check purchase status:', e);
+    } finally {
+      setCheckingPurchase(false);
+    }
+  };
+
   const checkWishlist = () => {
     const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
     setIsWishlisted(wishlist.some(item => item.slug === slug));
@@ -70,8 +101,11 @@ const ProductDetail = ({ productSlug, onClose, onAddToCart }) => {
 
   const handleBuyNow = () => {
     if (product) {
-      onAddToCart({ ...product, quantity });
-      setShowCheckout(true);
+      if (onBuyNow) {
+        onBuyNow({ ...product, quantity });
+      } else {
+        onAddToCart({ ...product, quantity });
+      }
     }
   };
 
@@ -132,6 +166,10 @@ const ProductDetail = ({ productSlug, onClose, onAddToCart }) => {
   };
 
   const submitReview = async () => {
+    if (!isSignedIn || !clerkUser) {
+      toast.error('Please log in to submit a review');
+      return;
+    }
     if (userRating === 0) {
       toast.error('Please select a rating');
       return;
@@ -141,19 +179,34 @@ const ProductDetail = ({ productSlug, onClose, onAddToCart }) => {
       return;
     }
 
-    // Here you would normally save to database
-    const newReview = {
-      userName: 'Guest User', // Replace with actual user name
-      rating: userRating,
-      comment: reviewText,
-      createdAt: new Date().toISOString()
-    };
+    const toastId = toast.loading('Submitting your review...');
+    try {
+      const reviewData = {
+        userName: clerkUser.fullName || `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'Verified Buyer',
+        rating: userRating,
+        comment: reviewText,
+        product: product.$id,
+        userId: clerkUser.id
+      };
 
-    setReviews([newReview, ...reviews]);
-    setUserRating(0);
-    setReviewText('');
-    setShowReviewForm(false);
-    toast.success('Review submitted successfully!');
+      const result = await productService.addReview(reviewData, clerkUser.id);
+      if (result.success) {
+        toast.success('Review submitted successfully! Thank you.', { id: toastId });
+        const newReview = {
+          ...result.review,
+          createdAt: new Date().toISOString()
+        };
+        setReviews([newReview, ...reviews]);
+        setUserRating(0);
+        setReviewText('');
+        setShowReviewForm(false);
+      } else {
+        toast.error(result.error || 'Failed to submit review. Make sure you have purchased this product.', { id: toastId });
+      }
+    } catch (e) {
+      console.error('Submit review error:', e);
+      toast.error('Something went wrong. Please try again.', { id: toastId });
+    }
   };
 
   const handlePlaceOrder = async () => {
@@ -615,13 +668,37 @@ const ProductDetail = ({ productSlug, onClose, onAddToCart }) => {
           <div className="mb-12">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-stone-800">Customer Reviews</h2>
-              <button 
-                onClick={() => setShowReviewForm(!showReviewForm)}
-                className="px-6 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
-              >
-                {showReviewForm ? 'Cancel' : 'Write a Review'}
-              </button>
+              {isSignedIn ? (
+                hasPurchased ? (
+                  <button 
+                    onClick={() => setShowReviewForm(!showReviewForm)}
+                    className="px-6 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors font-semibold"
+                  >
+                    {showReviewForm ? 'Cancel' : 'Write a Review'}
+                  </button>
+                ) : (
+                  <span className="text-sm font-semibold text-stone-500 bg-stone-100 px-4 py-2 rounded-lg border border-stone-200">
+                    Only buyers can review
+                  </span>
+                )
+              ) : (
+                <span className="text-sm font-semibold text-stone-500 bg-stone-100 px-4 py-2 rounded-lg border border-stone-200">
+                  Login to write a review
+                </span>
+              )}
             </div>
+
+            {/* Info banners */}
+            {isSignedIn && !hasPurchased && !checkingPurchase && (
+              <div className="bg-amber-50/50 border border-amber-200 rounded-xl p-4 mb-6 text-amber-800 text-sm flex items-center gap-2">
+                <span>🔒 Only verified buyers who have purchased this product from VadieKashmir can submit a review.</span>
+              </div>
+            )}
+            {!isSignedIn && (
+              <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 mb-6 text-stone-600 text-sm flex items-center gap-2">
+                <span>🔒 Please log in to submit a review for this product.</span>
+              </div>
+            )}
 
             {/* Review Form */}
             {showReviewForm && (

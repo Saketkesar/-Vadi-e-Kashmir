@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Package, ShoppingCart, FileText, Users, TrendingUp, Plus, Edit, Trash2, 
-  Upload, X, CheckCircle, AlertCircle, Search, Filter, Eye, Mail, Phone, Calendar, Send
+  Upload, X, CheckCircle, AlertCircle, Search, Filter, Eye, Mail, Phone, Calendar, Send,
+  ChevronUp, ChevronDown, Image, Settings, LogOut
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import productService from '../services/productService';
@@ -13,7 +14,7 @@ import emailService from '../services/emailService';
 import settingsService from '../services/settingsService';
 import { databases, DATABASE_ID, COLLECTION_IDS } from '../config/appwrite';
 
-const AdminDashboard = ({ user, onClose }) => {
+const AdminDashboard = ({ user, onClose, onLogout }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -135,7 +136,9 @@ const AdminDashboard = ({ user, onClose }) => {
     { id: 'products', label: 'Products', icon: Package },
     { id: 'orders', label: 'Orders', icon: ShoppingCart },
     { id: 'blogs', label: 'Blogs', icon: FileText },
-    { id: 'users', label: 'Users', icon: Users }
+    { id: 'users', label: 'Users', icon: Users },
+    { id: 'carousel', label: 'Carousel Banner', icon: Image },
+    { id: 'settings', label: 'News Bulletin', icon: Settings }
   ];
 
   return (
@@ -176,6 +179,14 @@ const AdminDashboard = ({ user, onClose }) => {
               >
                 <Send className="w-4 h-4" />
                 Test Email
+              </button>
+
+              <button
+                onClick={onLogout}
+                className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-lg flex items-center gap-2 text-sm transition-colors border border-stone-200 font-semibold"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
               </button>
             </div>
           </div>
@@ -220,6 +231,8 @@ const AdminDashboard = ({ user, onClose }) => {
                 {activeTab === 'orders' && <OrdersTab orders={orders} onRefresh={loadAllData} />}
                 {activeTab === 'blogs' && <BlogsTab blogs={blogs} onRefresh={loadAllData} />}
                 {activeTab === 'users' && <UsersTab users={users} />}
+                {activeTab === 'carousel' && <CarouselTab />}
+                {activeTab === 'settings' && <SettingsTab />}
               </>
             )}
           </div>
@@ -1480,6 +1493,344 @@ const UsersTab = ({ users }) => {
             ))}
           </tbody>
         </table>
+      </div>
+    </div>
+  );
+};
+
+/* --------------------------
+   Carousel Banner Management Tab
+   -------------------------- */
+const CarouselTab = () => {
+  const [slides, setSlides] = useState([]);
+  const [loading, setLoading] = useState(false);
+  
+  // New slide form fields
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
+  const [link, setLink] = useState('');
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    loadSlides();
+  }, []);
+
+  const loadSlides = async () => {
+    setLoading(true);
+    const result = await settingsService.getCarouselImages();
+    if (result.success && result.carouselImages && result.carouselImages.length > 0) {
+      setSlides(result.carouselImages);
+    } else {
+      // Fallback default slides as editable templates
+      setSlides([
+        {
+          url: 'https://img.freepik.com/premium-photo/shangrila-resort-skardu_1000854-3.jpg?semt=ais_hybrid&w=740&q=80',
+          title: 'Vadiekashmir',
+          subtitle: 'Authentic Kashmir Products - Saffron, Dry Fruits, and Handcrafted Treasures',
+          link: '#shop'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1598305372104-f2906a294976?auto=format&fit=crop&w=1200&q=80',
+          title: 'Artisan Pashminas',
+          subtitle: 'Exquisite Pure Pashmina & Cashmere Handwoven in Kashmir',
+          link: '#shop'
+        },
+        {
+          url: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80',
+          title: 'Pure Pampore Saffron',
+          subtitle: 'Hand-picked Grade A Saffron direct from the valley',
+          link: '#shop'
+        }
+      ]);
+    }
+    setLoading(false);
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleAddSlide = async (e) => {
+    e.preventDefault();
+    if (!imageFile) {
+      toast.error('Please choose a banner image to upload');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const uploadResult = await productService.uploadProductImage(imageFile);
+      if (!uploadResult.success) {
+        toast.error('Image upload failed: ' + uploadResult.error);
+        setUploading(false);
+        return;
+      }
+
+      const newSlide = {
+        url: uploadResult.url,
+        title,
+        subtitle,
+        link: link || '#shop'
+      };
+
+      const updatedSlides = [...slides, newSlide];
+      const saveResult = await settingsService.setCarouselImages(updatedSlides);
+      
+      if (saveResult.success) {
+        setSlides(updatedSlides);
+        toast.success('Slide added successfully!');
+        // Reset form
+        setTitle('');
+        setSubtitle('');
+        setLink('');
+        setImageFile(null);
+        setImagePreview('');
+      } else {
+        toast.error('Failed to save settings: ' + saveResult.error);
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Error adding slide');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDeleteSlide = async (indexToDelete) => {
+    if (!window.confirm('Are you sure you want to delete this slide?')) return;
+    
+    const updatedSlides = slides.filter((_, idx) => idx !== indexToDelete);
+    const saveResult = await settingsService.setCarouselImages(updatedSlides);
+    if (saveResult.success) {
+      setSlides(updatedSlides);
+      toast.success('Slide deleted');
+    } else {
+      toast.error('Failed to save changes');
+    }
+  };
+
+  const moveSlide = async (index, direction) => {
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === slides.length - 1) return;
+
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const updatedSlides = [...slides];
+    // Swap
+    const temp = updatedSlides[index];
+    updatedSlides[index] = updatedSlides[targetIndex];
+    updatedSlides[targetIndex] = temp;
+
+    const saveResult = await settingsService.setCarouselImages(updatedSlides);
+    if (saveResult.success) {
+      setSlides(updatedSlides);
+      toast.success('Slide reordered');
+    } else {
+      toast.error('Failed to reorder slides');
+    }
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="text-2xl font-bold text-stone-800">Homepage Carousel</h2>
+          <p className="text-sm text-stone-500">Configure large slideshow banner images for the front page</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Add New Slide Form */}
+        <div className="bg-white p-6 rounded-lg border border-stone-200 shadow-sm h-fit">
+          <h3 className="text-lg font-bold text-stone-800 mb-4 pb-2 border-b border-stone-100">Add New Slide</h3>
+          <form onSubmit={handleAddSlide} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1">Banner Image *</label>
+              <input 
+                type="file" 
+                accept="image/*" 
+                onChange={handleImageChange}
+                className="w-full text-sm text-stone-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100"
+                required
+              />
+              {imagePreview && (
+                <div className="mt-3 relative aspect-video rounded overflow-hidden border border-stone-200 bg-stone-50">
+                  <img src={imagePreview} alt="Preview" className="w-full h-full object-contain mx-auto" />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1">Title (Overlay Text)</label>
+              <input 
+                type="text" 
+                value={title} 
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g. Kashmiri Pashmina Shawls"
+                className="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-1 focus:ring-amber-500 focus:outline-none text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1">Subtitle (Overlay Description)</label>
+              <textarea 
+                value={subtitle} 
+                onChange={(e) => setSubtitle(e.target.value)}
+                placeholder="e.g. Exquisite hand-woven luxury direct from artisans"
+                className="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-1 focus:ring-amber-500 focus:outline-none text-sm h-20 resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1">Button Link Target</label>
+              <input 
+                type="text" 
+                value={link} 
+                onChange={(e) => setLink(e.target.value)}
+                placeholder="e.g. #shop or external URL"
+                className="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-1 focus:ring-amber-500 focus:outline-none text-sm"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={uploading}
+              className="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-md font-semibold text-sm transition-colors flex items-center justify-center gap-2"
+            >
+              {uploading ? 'Uploading Banner...' : 'Add Slide to Home'}
+            </button>
+          </form>
+        </div>
+
+        {/* Existing Slides List */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="bg-white p-6 rounded-lg border border-stone-200 shadow-sm min-h-[300px]">
+            <h3 className="text-lg font-bold text-stone-800 mb-4 pb-2 border-b border-stone-100">Current Slides ({slides.length})</h3>
+            
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
+                <p className="mt-2 text-stone-500 text-sm">Loading slides...</p>
+              </div>
+            ) : slides.length === 0 ? (
+              <div className="text-center py-12 text-stone-400">
+                <p>No custom slides configured. The frontpage is currently showing the high-quality default Kashmiri slides.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {slides.map((slide, index) => (
+                  <div key={index} className="flex gap-4 p-4 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors">
+                    <img 
+                      src={slide.url} 
+                      alt={slide.title || 'Slide'} 
+                      className="w-28 h-20 object-cover rounded border border-stone-200 bg-stone-100"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-stone-800 text-sm truncate">{slide.title || '(No Title)'}</h4>
+                      <p className="text-stone-500 text-xs line-clamp-1 mt-1">{slide.subtitle || '(No Subtitle)'}</p>
+                      <p className="text-amber-600 text-xs font-semibold mt-1">Link: {slide.link}</p>
+                    </div>
+                    <div className="flex flex-col items-center justify-center gap-1.5 pl-2 border-l border-stone-200">
+                      <button
+                        onClick={() => moveSlide(index, 'up')}
+                        disabled={index === 0}
+                        className="p-1 hover:bg-stone-200 rounded disabled:opacity-30 text-stone-500"
+                        title="Move Up"
+                      >
+                        <ChevronUp className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => moveSlide(index, 'down')}
+                        disabled={index === slides.length - 1}
+                        className="p-1 hover:bg-stone-200 rounded disabled:opacity-30 text-stone-500"
+                        title="Move Down"
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteSlide(index)}
+                        className="p-1 text-red-500 hover:bg-red-50 rounded"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* --------------------------
+   News Management Tab
+   -------------------------- */
+const SettingsTab = () => {
+  const [bulletinText, setBulletinText] = useState('');
+  const [savingBulletin, setSavingBulletin] = useState(false);
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const loadSettings = async () => {
+    const bResult = await settingsService.getBulletinText();
+    if (bResult.success) {
+      setBulletinText(bResult.bulletinText);
+    }
+  };
+
+  const handleBulletinSave = async (e) => {
+    e.preventDefault();
+    setSavingBulletin(true);
+    const result = await settingsService.setBulletinText(bulletinText);
+    if (result.success) {
+      toast.success('Bulletin text updated successfully!');
+    } else {
+      toast.error('Failed to save bulletin text');
+    }
+    setSavingBulletin(false);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-stone-800">News Bulletin</h2>
+        <p className="text-sm text-stone-500">Configure visual announcements and news banners for VadieKashmir</p>
+      </div>
+
+      <div className="max-w-2xl bg-white p-6 rounded-lg border border-stone-200 shadow-sm">
+        <h3 className="text-lg font-bold text-stone-800 mb-3">Navbar Bulletin Banner</h3>
+        <p className="text-xs text-stone-500 mb-4">Displays a scrolling banner alert at the very top of the navigation bar.</p>
+        
+        <form onSubmit={handleBulletinSave} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-stone-700 uppercase mb-1">Bulletin Text</label>
+            <textarea
+              value={bulletinText}
+              onChange={(e) => setBulletinText(e.target.value)}
+              placeholder="e.g. Free shipping on all products above ₹999! Special handloom items now live."
+              className="w-full px-3 py-2 border border-stone-300 rounded-md focus:ring-1 focus:ring-amber-500 focus:outline-none text-sm h-32 resize-none"
+            />
+          </div>
+          
+          <button
+            type="submit"
+            disabled={savingBulletin}
+            className="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-md font-semibold text-xs tracking-wider uppercase transition-colors"
+          >
+            {savingBulletin ? 'Saving...' : 'Update Bulletin Banner'}
+          </button>
+        </form>
       </div>
     </div>
   );

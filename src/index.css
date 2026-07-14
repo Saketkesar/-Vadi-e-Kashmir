@@ -79,3 +79,23 @@ html {
     background-color: #fbbf24;
     color: #78350f;
 }
+
+/* Festive Animations */
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+@keyframes snow {
+  0% { transform: translateY(-10px) translateX(0); }
+  50% { transform: translateY(50vh) translateX(15px); }
+  100% { transform: translateY(105vh) translateX(-15px); }
+}
+
+.animate-snow {
+  animation: snow 10s linear infinite;
+}

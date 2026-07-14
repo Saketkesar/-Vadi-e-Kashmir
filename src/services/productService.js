@@ -252,9 +252,37 @@ class ProductService {
     }
   }
 
-  // Add product review
-  async addReview(reviewData) {
+  // Add product review with verified buyer validation
+  async addReview(reviewData, userId) {
     try {
+      if (!userId) {
+        throw new Error('User authentication required to submit a review.');
+      }
+
+      // Verify user has purchased this product
+      const response = await databases.listDocuments(
+        DATABASE_ID,
+        COLLECTION_IDS.ORDERS,
+        [
+          Query.equal('userId', userId),
+          Query.limit(100)
+        ]
+      );
+
+      const purchased = response.documents.some(order => {
+        let items = [];
+        try {
+          items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+        } catch (e) {
+          console.error("Failed to parse items for order check", e);
+        }
+        return items.some(item => item.productId === reviewData.product);
+      });
+
+      if (!purchased) {
+        throw new Error('Only customers who have purchased this product can leave a review.');
+      }
+
       const review = await databases.createDocument(
         DATABASE_ID,
         COLLECTION_IDS.REVIEWS,
@@ -263,7 +291,7 @@ class ProductService {
       );
 
       // Update product rating
-      await this.updateProductRating(reviewData.productId);
+      await this.updateProductRating(reviewData.product);
 
       return {
         success: true,

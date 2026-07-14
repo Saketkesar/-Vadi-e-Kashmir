@@ -1,6 +1,6 @@
 // src/components/AdminLogin.jsx
 import React, { useState } from 'react';
-import { Lock, Mail, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import authService from '../services/authService';
 
@@ -19,7 +19,6 @@ const AdminLogin = ({ onLoginSuccess }) => {
     setLoading(false);
 
     if (result.success) {
-      // Verify it's actually an admin
       if (result.user.email === 'admin@vadikashmir.com') {
         toast.success('Welcome back, Admin!');
         if (onLoginSuccess) {
@@ -35,57 +34,67 @@ const AdminLogin = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-900 via-stone-800 to-amber-900 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
-        {/* Admin Badge */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-amber-600 rounded-2xl mb-4 shadow-2xl">
-            <ShieldCheck className="w-12 h-12 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Admin Portal</h1>
-          <p className="text-stone-300">Vadiekashmir Management</p>
+    <div className="min-h-screen bg-[#faf6eb] flex items-center justify-center p-4 font-sans relative">
+      {/* Decorative Warm Accent Blur Circles */}
+      <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-amber-200/20 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-amber-100/30 rounded-full blur-[80px] pointer-events-none"></div>
+
+      <div className="max-w-md w-full relative z-10 space-y-6">
+        {/* Card Header & Brand Logo */}
+        <div className="text-center">
+          <img 
+            src="/vadielogo.png" 
+            alt="VadieKashmir Logo" 
+            className="h-16 w-auto mx-auto object-contain mb-3" 
+          />
+          <h2 className="text-2xl font-serif font-extrabold italic text-stone-800 tracking-wide">
+            Admin Portal
+          </h2>
+          <p className="text-stone-500 text-xs mt-1">
+            VadieKashmir Shop Administration
+          </p>
         </div>
 
-        {/* Login Form */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
+        {/* Form Card */}
+        <div className="bg-white border border-stone-200/80 shadow-[0_15px_35px_rgba(44,38,28,0.06)] rounded-3xl p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field */}
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">
+            {/* Email Input */}
+            <div className="space-y-2">
+              <label className="block text-[11px] font-bold text-stone-500 tracking-widest uppercase">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-stone-400" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@example.com"
-                  className="w-full pl-11 pr-4 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                  placeholder="admin@vadikashmir.com"
+                  className="w-full bg-stone-50/60 text-stone-900 placeholder-stone-400 border border-stone-200 rounded-xl pl-11 pr-4 py-3.5 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all text-sm"
                 />
               </div>
             </div>
 
-            {/* Password Field */}
-            <div>
-              <label className="block text-sm font-medium text-stone-700 mb-2">
+            {/* Password Input */}
+            <div className="space-y-2">
+              <label className="block text-[11px] font-bold text-stone-500 tracking-widest uppercase">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-stone-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="w-full pl-11 pr-12 py-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                  placeholder="••••••••"
+                  className="w-full bg-stone-50/60 text-stone-900 placeholder-stone-400 border border-stone-200 rounded-xl pl-11 pr-12 py-3.5 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 transition-all text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -96,11 +105,11 @@ const AdminLogin = ({ onLoginSuccess }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-lg shadow-lg hover:shadow-xl"
+              className="w-full py-3.5 bg-amber-700 hover:bg-amber-800 text-white font-bold uppercase tracking-wider text-xs shadow-md hover:shadow-lg transition-all rounded-xl duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   Authenticating...
                 </span>
               ) : (
@@ -109,14 +118,11 @@ const AdminLogin = ({ onLoginSuccess }) => {
             </button>
           </form>
 
-          {/* Help Text */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-stone-500">
-              Authorized personnel only
-            </p>
+          {/* Links */}
+          <div className="mt-8 pt-6 border-t border-stone-100 text-center">
             <button
               onClick={() => window.location.hash = '#home'}
-              className="mt-2 text-sm text-amber-600 hover:text-amber-700 font-medium"
+              className="text-stone-500 hover:text-amber-800 text-xs font-semibold uppercase tracking-wider transition-colors inline-flex items-center gap-1.5"
             >
               ← Back to Store
             </button>
@@ -124,8 +130,8 @@ const AdminLogin = ({ onLoginSuccess }) => {
         </div>
 
         {/* Security Notice */}
-        <div className="mt-6 text-center text-xs text-stone-400">
-          <p>This portal is secured and monitored</p>
+        <div className="text-center text-[10px] text-stone-400 uppercase tracking-widest">
+          Secure Monitored Connection
         </div>
       </div>
     </div>

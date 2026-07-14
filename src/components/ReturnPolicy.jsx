@@ -16,7 +16,7 @@ const ReturnPolicy = () => {
             Back to Home
           </button>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Return & Refund Policy</h1>
-          <p className="text-stone-200 text-lg">Last updated: November 26, 2025</p>
+          <p className="text-stone-200 text-lg">Last updated: July 14, 2026</p>
         </div>
       </div>
 

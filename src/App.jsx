@@ -9,12 +9,17 @@ import toast from 'react-hot-toast';
 import { ArrowLeft } from "react-feather";
 
 
+// Import Clerk services
+import { useUser, useClerk, UserButton } from '@clerk/clerk-react';
+import settingsService from './services/settingsService';
+
 // Import Appwrite services
 import authService from './services/authService';
 import productService from './services/productService';
 import categoryService from './services/categoryService';
 import blogService from './services/blogService';
 import orderService from './services/orderService';
+import emailService from './services/emailService';
 
 // Import Components
 import BlogList from './components/BlogList';
@@ -54,237 +59,6 @@ const SectionTitle = ({ title, subtitle }) => (
     {subtitle && <p className="text-stone-600 max-w-2xl mx-auto">{subtitle}</p>}
   </div>
 );
-
-/* --------------------------
-   Auth Page with Phone OTP & Admin Email Login
-   -------------------------- */
-const AuthPage = ({ onSuccess = () => {} }) => {
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [userId, setUserId] = useState('');
-  const [step, setStep] = useState('phone'); // 'phone' or 'otp'
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-
-  const validateIndianPhone = (phoneNumber) => {
-    // Remove spaces, dashes, and other non-numeric characters
-    const cleaned = phoneNumber.replace(/\D/g, '');
-    
-    // Check if it's a valid 10-digit Indian number
-    if (cleaned.length === 10 && cleaned.match(/^[6-9]\d{9}$/)) {
-      return `+91${cleaned}`;
-    }
-    // Check if it already has +91 prefix
-    if (cleaned.length === 12 && cleaned.startsWith('91') && cleaned.substring(2).match(/^[6-9]\d{9}$/)) {
-      return `+${cleaned}`;
-    }
-    return null;
-  };
-
-  const handleSendOTP = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
-    
-    if (!phone) {
-      setError('Please enter your phone number');
-      return;
-    }
-
-    // Validate Indian phone number
-    const formattedPhone = validateIndianPhone(phone);
-    
-    if (!formattedPhone) {
-      setError('Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9)');
-      return;
-    }
-    
-    setBusy(true);
-    try {
-      const result = await authService.sendOTP(formattedPhone);
-      if (result.success) {
-        setUserId(result.userId);
-        setStep('otp');
-        setSuccess('OTP sent successfully! Check your phone.');
-      } else {
-        setError(result.error || 'Failed to send OTP');
-      }
-    } catch (err) {
-      setError(err.message || 'Failed to send OTP');
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const handleVerifyOTP = async (e) => {
-    e.preventDefault();
-    setError(null);
-    
-    if (!otp) {
-      setError('Please enter the OTP');
-      return;
-    }
-
-    setBusy(true);
-    try {
-      const result = await authService.verifyOTP(userId, otp);
-      if (result.success) {
-        setSuccess('Login successful!');
-        setTimeout(() => onSuccess(result.user), 500);
-      } else {
-        setError(result.error || 'Invalid OTP');
-      }
-    } catch (err) {
-      setError(err.message || 'Invalid OTP');
-    } finally {
-      setBusy(false);
-    }
-  };
-
-
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      {/* Modal Container */}
-      <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl">
-        {/* Close Button */}
-        <button
-          onClick={() => window.location.hash = '#home'}
-          className="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600 hover:bg-stone-100 rounded-lg transition-colors z-10"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        {/* Header with Kashmir Image */}
-        <div 
-          className="relative h-32 bg-cover bg-center rounded-t-2xl"
-          style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&q=80&w=1000)',
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-stone-900/80 to-amber-900/80 rounded-t-2xl flex items-center justify-center">
-            <div className="text-center">
-              <img src="/vadielogo.png" alt="Vadiekashmir Logo" className="w-16 h-16 rounded-2xl shadow-2xl mx-auto mb-2 object-contain bg-white" />
-              <h1 className="text-xl font-serif text-white">Vadiekashmir</h1>
-            </div>
-          </div>
-        </div>
-
-        {/* Login Form */}
-        <div className="p-8">
-          <h2 className="text-2xl font-bold text-stone-800 mb-2 text-center">Welcome Back</h2>
-          <p className="text-center text-stone-600 text-sm mb-6">Sign in to continue shopping</p>
-
-          {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-4 text-sm flex items-start gap-2">
-              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {success && (
-            <div className="bg-green-50 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded mb-4 text-sm flex items-start gap-2">
-              <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-              <span>{success}</span>
-            </div>
-          )}
-
-          {step === 'phone' ? (
-            <form onSubmit={handleSendOTP} className="space-y-5">
-              {/* Phone Form */}
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2 flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-amber-600" />
-                  Indian Mobile Number
-                </label>
-                <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-500 font-medium">+91</span>
-                  <input
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="9876543210"
-                    type="tel"
-                    className="w-full pl-14 pr-4 py-3 border-2 border-stone-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all"
-                    required
-                  />
-                </div>
-                <p className="mt-2 text-xs text-stone-500">We'll send you a verification code</p>
-              </div>
-              <button 
-                type="submit" 
-                disabled={busy}
-                className="w-full bg-gradient-to-r from-amber-600 to-amber-700 text-white py-3 rounded-xl hover:from-amber-700 hover:to-amber-800 disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02]"
-              >
-                {busy ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Sending OTP...
-                  </span>
-                ) : (
-                  'Continue with OTP'
-                )}
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleVerifyOTP} className="space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2 flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-amber-600" />
-                  Enter Verification Code
-                </label>
-                <input
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  placeholder="123456"
-                  type="text"
-                  maxLength="6"
-                  className="w-full px-4 py-4 border-2 border-stone-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-center text-3xl tracking-[0.5em] font-bold transition-all"
-                  required
-                />
-                <p className="mt-2 text-xs text-stone-500 text-center">Code sent to +91 {phone}</p>
-              </div>
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep('phone');
-                    setOtp('');
-                    setError(null);
-                  }}
-                  className="flex-1 px-4 py-3 border-2 border-stone-300 text-stone-700 rounded-xl hover:bg-stone-50 font-medium transition-all"
-                >
-                  Change Number
-                </button>
-                <button 
-                  type="submit" 
-                  disabled={busy}
-                  className="flex-1 bg-gradient-to-r from-amber-600 to-amber-700 text-white py-3 rounded-xl hover:from-amber-700 hover:to-amber-800 disabled:opacity-50 font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02]"
-                >
-                  {busy ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Verifying...
-                    </span>
-                  ) : (
-                    'Verify & Login'
-                  )}
-                </button>
-              </div>
-            </form>
-          )}
-
-          {/* Footer Note */}
-          <div className="mt-6 pt-6 border-t border-stone-200 text-center">
-            <p className="text-xs text-stone-500">
-              Secure OTP authentication for your safety
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 /* --------------------------
    Product Card
@@ -694,7 +468,47 @@ const TrackOrderPage = () => {
   );
 };
 
+/* --------------------------
+   404 Page Not Found Component
+   -------------------------- */
+const NotFoundPage = ({ navigateTo }) => {
+  return (
+    <div className="min-h-[70vh] bg-[#faf6eb] flex flex-col items-center justify-center px-4 py-16 text-center">
+      <div className="max-w-md mx-auto space-y-8">
+        <img 
+          src="/404_clean.png" 
+          alt="404 Page Not Found" 
+          className="w-72 md:w-80 h-auto mx-auto drop-shadow-lg" 
+        />
+        <div className="space-y-3">
+          <h2 className="text-3xl md:text-4xl font-serif font-extrabold italic text-amber-850 text-amber-850">
+            Lost in the Valley
+          </h2>
+          <p className="text-stone-650 text-sm md:text-base max-w-sm mx-auto leading-relaxed">
+            The page you are looking for has vanished like the morning mountain mist. Let us guide you back.
+          </p>
+        </div>
+        <div>
+          <button
+            onClick={() => navigateTo('home')}
+            className="px-8 py-3 bg-amber-750 bg-amber-700 hover:bg-amber-800 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
+  // Clerk authentication hooks
+  const { user: clerkUser, isLoaded, isSignedIn } = useUser();
+  const { openSignIn, openSignUp } = useClerk();
+
+  // Carousel States
+  const [carouselSlides, setCarouselSlides] = useState([]);
+  const [activeSlide, setActiveSlide] = useState(0);
   // State
   const [view, setView] = useState('home'); // 'home', 'shop', 'track', 'about', 'login', etc.
   const [user, setUser] = useState(null);
@@ -710,12 +524,30 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [lastOrderData, setLastOrderData] = useState(null);
+  const [bulletin, setBulletin] = useState('');
 
   // Load user session and data on mount
   useEffect(() => {
-    checkSession();
-    loadProducts();
-    loadCategories();
+    const initApp = async () => {
+      const result = await authService.ensureSession();
+      if (result.success && result.user && result.user.email === 'admin@vadikashmir.com') {
+        const mappedAdmin = {
+          $id: result.user.$id,
+          id: result.user.$id,
+          email: result.user.email,
+          name: result.user.name || 'Admin',
+          phone: result.user.phone || '',
+          isAdmin: true
+        };
+        setUser(mappedAdmin);
+      }
+      loadProducts();
+      loadCategories();
+      loadCarouselSlides();
+      loadBulletin();
+    };
+    initApp();
+
     // Load cart from localStorage
     const savedCart = localStorage.getItem('vk_cart');
     if (savedCart) {
@@ -727,24 +559,118 @@ export default function App() {
     }
   }, []);
 
+  const loadCarouselSlides = async () => {
+    try {
+      const result = await settingsService.getCarouselImages();
+      if (result.success && result.carouselImages && result.carouselImages.length > 0) {
+        setCarouselSlides(result.carouselImages);
+      } else {
+        // Fallback default slides
+        setCarouselSlides([
+          {
+            url: 'https://img.freepik.com/premium-photo/shangrila-resort-skardu_1000854-3.jpg?semt=ais_hybrid&w=740&q=80',
+            title: 'Vadiekashmir',
+            subtitle: 'Authentic Kashmir Products - Saffron, Dry Fruits, and Handcrafted Treasures',
+            link: '#shop'
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1598305372104-f2906a294976?auto=format&fit=crop&w=1200&q=80',
+            title: 'Artisan Pashminas',
+            subtitle: 'Exquisite Pure Pashmina & Cashmere Handwoven in Kashmir',
+            link: '#shop'
+          },
+          {
+            url: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80',
+            title: 'Pure Pampore Saffron',
+            subtitle: 'Hand-picked Grade A Saffron direct from the valley',
+            link: '#shop'
+          }
+        ]);
+      }
+    } catch (err) {
+      console.error('Failed to load slides:', err);
+    }
+  };
+
+  const loadBulletin = async () => {
+    try {
+      const bResult = await settingsService.getBulletinText();
+      if (bResult.success) {
+        setBulletin(bResult.bulletinText);
+      }
+    } catch (err) {
+      console.error('Failed to load bulletin:', err);
+    }
+  };
+
+  // Autoplay carousel slides
+  useEffect(() => {
+    if (carouselSlides.length <= 1) return;
+    const interval = setInterval(() => {
+      setActiveSlide(prev => (prev === carouselSlides.length - 1 ? 0 : prev + 1));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [carouselSlides]);
+
   // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('vk_cart', JSON.stringify(cart));
   }, [cart]);
 
-  // Check if user is logged in
-  const checkSession = async () => {
-    const result = await authService.getCurrentUser();
-    if (result.success) {
-      setUser(result.user);
-      
-      // If admin user and on home page, redirect to admin dashboard
-      if (result.user.email === 'admin@vadikashmir.com' && window.location.hash === '') {
-        window.location.hash = '#admin';
-      }
+  // Synchronize Clerk user session and Appwrite database
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (isSignedIn && clerkUser) {
+      const mappedUser = {
+        $id: clerkUser.id,
+        id: clerkUser.id,
+        email: clerkUser.primaryEmailAddress?.emailAddress || '',
+        name: clerkUser.fullName || `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'User',
+        phone: clerkUser.primaryPhoneNumber?.phoneNumber || '',
+        isAdmin: clerkUser.primaryEmailAddress?.emailAddress === 'admin@vadikashmir.com'
+      };
+
+      const syncUser = async () => {
+        try {
+          // Sync profile to Appwrite for billing/records
+          const result = await authService.createOrUpdateUser(mappedUser);
+          
+          if (result.success && result.isNew) {
+            emailService.sendWelcomeEmail(mappedUser).catch(err => {
+              console.error('Welcome email failed:', err);
+            });
+          }
+          
+          // Get the latest profile from Appwrite (contains isAdmin flag)
+          const profileResult = await authService.getUserProfile(clerkUser.id);
+          if (profileResult.success && profileResult.user) {
+            mappedUser.isAdmin = !!profileResult.user.isAdmin;
+          }
+        } catch (e) {
+          console.error("Failed to sync user with Appwrite", e);
+        }
+        
+        setUser(mappedUser);
+        
+        // If admin redirect to admin dashboard
+        if (mappedUser.isAdmin && window.location.hash === '') {
+          window.location.hash = '#admin';
+        }
+      };
+
+      syncUser();
+    } else {
+      setUser(prev => {
+        if (prev && prev.isAdmin) {
+          return prev;
+        }
+        return null;
+      });
     }
+    
     setLoading(false);
-  };
+  }, [isLoaded, isSignedIn, clerkUser]);
 
   // Load products from Appwrite
   const loadProducts = async () => {
@@ -907,6 +833,14 @@ export default function App() {
         setView('blogs');
       } else if (hash === 'admin-login') {
         setView('admin-login');
+      } else if (hash === 'login') {
+        openSignIn();
+        window.location.hash = 'home';
+        setView('home');
+      } else if (hash === 'signup') {
+        openSignUp();
+        window.location.hash = 'home';
+        setView('home');
       } else {
         setView(hash);
       }
@@ -939,19 +873,22 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-stone-50 font-sans">
-      {/* Login Popup Modal */}
-      {(view === 'login' || view === 'signup') && (
-        <AuthPage onSuccess={handleLoginSuccess} />
+      {/* Bulletin news alert banner */}
+      {bulletin && (
+        <div className="bg-amber-700 text-white py-2 px-4 text-xs font-semibold overflow-hidden relative select-none z-40 border-b border-white/10 shadow-sm">
+          <div className="flex items-center justify-center">
+            <span className="inline-block animate-marquee uppercase tracking-wider whitespace-nowrap">
+              📢 &nbsp; {bulletin} &nbsp; • &nbsp; {bulletin} &nbsp; • &nbsp; {bulletin}
+            </span>
+          </div>
+        </div>
       )}
+
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white shadow-sm border-b border-stone-200">
         <div className="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
-          <button onClick={() => navigateTo('home')} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <img src="/vadielogo.png" alt="Vadiekashmir Logo" className="w-10 h-10 rounded-lg object-contain" />
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-stone-800">Vadiekashmir</h1>
-              <p className="text-xs text-stone-500 hidden md:block">KASHMIR TREASURES</p>
-            </div>
+          <button onClick={() => navigateTo('home')} className="flex items-center hover:opacity-80 transition-opacity flex-shrink-0">
+            <img src="/vadielogo.png" alt="Vadiekashmir Logo" className="h-10 md:h-12 w-auto object-contain" />
           </button>
 
           <nav className="hidden md:flex gap-8">
@@ -978,7 +915,6 @@ export default function App() {
           </nav>
 
           <div className="flex items-center gap-4">
-            {/* Search Bar */}
             <div className="hidden md:block relative search-container">
               <div className="relative">
                 <input
@@ -997,9 +933,9 @@ export default function App() {
                 <div className="absolute top-full mt-2 w-96 bg-white rounded-lg shadow-2xl border border-stone-200 max-h-96 overflow-y-auto z-50">
                   {searchFilteredProducts.slice(0, 8).map(product => (
                     <div
-                      key={product.$id}
-                      onClick={() => handleSearchSelect(product)}
-                      className="flex items-center gap-3 p-3 hover:bg-stone-50 cursor-pointer border-b border-stone-100 last:border-0"
+                       key={product.$id}
+                       onClick={() => handleSearchSelect(product)}
+                       className="flex items-center gap-3 p-3 hover:bg-stone-50 cursor-pointer border-b border-stone-100 last:border-0"
                     >
                       <img 
                         src={product.images?.[0] || product.image || 'https://via.placeholder.com/60'} 
@@ -1009,7 +945,7 @@ export default function App() {
                       <div className="flex-1">
                         <h4 className="font-medium text-stone-800 text-sm line-clamp-1">{product.name}</h4>
                         <p className="text-xs text-stone-500 line-clamp-1">{product.categoryName || 'Product'}</p>
-                        <p className="text-sm font-bold text-amber-600 mt-1">₹{product.price?.toLocaleString()}</p>
+                        <p className="text-sm font-bold mt-1 text-stone-800">₹{product.price?.toLocaleString()}</p>
                       </div>
                     </div>
                   ))}
@@ -1038,25 +974,17 @@ export default function App() {
               )}
             </button>
 
-            {user ? (
-              <div className="relative group hidden md:block">
-                <button className="flex items-center gap-2 px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors">
-                  <span>{user.name || user.email || user.phone || 'Account'}</span>
-                  <ChevronRight size={16} className="rotate-90" />
-                </button>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-stone-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  {user.email === 'admin@vadikashmir.com' && (
-                    <button onClick={() => navigateTo('admin')} className="w-full text-left px-4 py-2 hover:bg-stone-50 text-amber-700 font-medium border-b">
-                      Admin Dashboard
-                    </button>
-                  )}
-                  <button onClick={handleLogout} className="w-full text-left px-4 py-2 hover:bg-stone-50 text-red-600">
-                    Logout
+            {isSignedIn ? (
+              <div className="flex items-center gap-4">
+                {user?.isAdmin && (
+                  <button onClick={() => navigateTo('admin')} className="px-4 py-2 border border-amber-700 text-amber-700 hover:bg-amber-50 rounded-lg text-sm font-medium transition-colors">
+                    Admin Dashboard
                   </button>
-                </div>
+                )}
+                <UserButton />
               </div>
             ) : (
-              <button onClick={() => navigateTo('login')} className="hidden md:flex px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors">
+              <button onClick={openSignIn} className="hidden md:flex px-4 py-2 bg-amber-700 text-white rounded-lg hover:bg-amber-800 transition-colors font-medium text-sm">
                 Login
               </button>
             )}
@@ -1144,28 +1072,24 @@ export default function App() {
                 Our Story
               </button>
               
-              {/* Divider */}
-              <div className="h-px bg-stone-200 my-2"></div>
-              
-              {/* Phone Number */}
-              <a href="tel:+919797472200" className="flex items-center gap-2 text-amber-700 font-bold">
-                <Phone size={18} />
-                +91 9797472200
-              </a>
+
               
               {/* Login/Logout */}
-              {user ? (
-                <button 
-                  onClick={() => {
-                    handleLogout();
-                    setIsMobileMenuOpen(false);
-                  }} 
-                  className="text-left text-red-600 font-medium"
-                >
-                  Logout
-                </button>
+              {isSignedIn ? (
+                <div className="flex items-center justify-between gap-4 mt-2">
+                  <UserButton />
+                  <button 
+                    onClick={() => {
+                      handleLogout();
+                      setIsMobileMenuOpen(false);
+                    }} 
+                    className="text-left text-red-600 font-medium"
+                  >
+                    Logout
+                  </button>
+                </div>
               ) : (
-                <button onClick={() => navigateTo('login')} className="text-left text-amber-700 font-bold">
+                <button onClick={() => { openSignIn(); setIsMobileMenuOpen(false); }} className="text-left text-amber-700 font-bold">
                   Login
                 </button>
               )}
@@ -1179,31 +1103,99 @@ export default function App() {
         {/* HOME PAGE */}
         {view === 'home' && (
           <>
-            {/* Hero Section */}
-            <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
-              <div
-                className="absolute inset-0 bg-cover bg-center"
-                style={{
-                  backgroundImage:
-                    "url('https://img.freepik.com/premium-photo/shangrila-resort-skardu_1000854-3.jpg?semt=ais_hybrid&w=740&q=80')",
-                }}
-              >
-                <div className="absolute inset-0 bg-black/40"></div>
-              </div>
-              <div className="relative z-10 text-center text-white px-6 max-w-4xl mx-auto">
-                <h2 className="text-5xl md:text-6xl font-bold mb-6">
-                  Vadiekashmir
-                </h2>
-                <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
-                  Authentic Kashmir Products - Saffron, Dry Fruits, and Handcrafted Treasures
-                </p>
-                <div className="flex gap-4 justify-center">
-                  <Button onClick={() => navigateTo('shop')} variant="primary">
-                    Shop Now
-                    <ChevronRight size={20} />
-                  </Button>
+            {/* Hero Carousel Section */}
+            <section className="relative h-[550px] md:h-[600px] flex items-center justify-center overflow-hidden bg-stone-900 shadow-inner">
+              {carouselSlides.length > 0 ? (
+                <>
+                  {carouselSlides.map((slide, index) => (
+                    <div
+                      key={index}
+                      className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                        index === activeSlide ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
+                      }`}
+                    >
+                      <div
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-[8000ms] ease-out"
+                        style={{
+                          backgroundImage: `url('${slide.url}')`,
+                          transform: index === activeSlide ? 'scale(1.05)' : 'scale(1)'
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-black/45"></div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center text-white px-6 max-w-4xl mx-auto space-y-6">
+                          {slide.title && (
+                            <h2 className="text-4xl md:text-6xl font-bold tracking-tight drop-shadow-md">
+                              {slide.title}
+                            </h2>
+                          )}
+                          {slide.subtitle && (
+                            <p className="text-base md:text-xl max-w-2xl mx-auto font-light leading-relaxed drop-shadow-sm">
+                              {slide.subtitle}
+                            </p>
+                          )}
+                          <div className="flex gap-4 justify-center pt-2">
+                            <Button
+                              onClick={() => {
+                                if (slide.link) {
+                                  if (slide.link.startsWith('#')) {
+                                    const page = slide.link.substring(1);
+                                    window.location.hash = slide.link;
+                                    if (['home', 'shop', 'blogs', 'track', 'about', 'my-orders'].includes(page)) {
+                                      navigateTo(page);
+                                    }
+                                  } else {
+                                    window.location.href = slide.link;
+                                  }
+                                } else {
+                                  navigateTo('shop');
+                                }
+                              }}
+                              variant="primary"
+                              className="px-8 py-3 text-base shadow-lg"
+                            >
+                              Shop Now
+                              <ChevronRight size={20} />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Navigation Arrows */}
+                  <button
+                    onClick={() => setActiveSlide(prev => (prev === 0 ? carouselSlides.length - 1 : prev - 1))}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/30 text-white/90 hover:bg-black/60 hover:text-white transition-all z-20"
+                  >
+                    <ChevronRight size={22} className="rotate-180" />
+                  </button>
+                  <button
+                    onClick={() => setActiveSlide(prev => (prev === carouselSlides.length - 1 ? 0 : prev + 1))}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/30 text-white/90 hover:bg-black/60 hover:text-white transition-all z-20"
+                  >
+                    <ChevronRight size={22} />
+                  </button>
+
+                  {/* Indicator Dots */}
+                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2.5 z-20">
+                    {carouselSlides.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setActiveSlide(index)}
+                        className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                          index === activeSlide ? 'bg-amber-600 scale-125 w-6' : 'bg-white/50 hover:bg-white/80'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="text-white text-center py-20">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white mb-2"></div>
+                  <p className="text-sm">Loading slides...</p>
                 </div>
-              </div>
+              )}
             </section>
 
             {/* Featured Products */}
@@ -1319,218 +1311,97 @@ const SectionTitle = ({ title, subtitle }) => (
   <div className="mb-8">
     <p className="text-sm uppercase text-amber-700 font-semibold tracking-wider">{subtitle}</p>
     <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 mt-2">{title}</h2>
-  </div>
-);
-*/}
+        {/* ABOUT PAGE */}
+        {view === 'about' && (
+          <section className="py-16 md:py-24 bg-[#f6ede0] min-h-screen text-stone-850">
+            <div className="container mx-auto px-4 md:px-6 max-w-6xl">
+              {/* Back Link */}
+              <div className="mb-10 flex items-center justify-between gap-4">
+                <button
+                  onClick={() => (window.location.hash = '#home')}
+                  className="inline-flex items-center gap-2 text-stone-700 hover:text-stone-900 transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                  <span className="font-semibold text-sm uppercase tracking-wider">Back to Home</span>
+                </button>
+                <div className="hidden md:flex items-center gap-2 text-stone-500 text-xs tracking-wider uppercase">
+                  <span>Trusted by artisans</span>
+                  <span>•</span>
+                  <span>Direct Trade</span>
+                  <span>•</span>
+                  <span>Authentic</span>
+                </div>
+              </div>
 
-{/* ABOUT PAGE */}
-{view === 'about' && (
-  <section className="py-20 bg-gradient-to-b from-stone-50 to-stone-100 min-h-screen">
-    <div className="container mx-auto px-4 md:px-6 max-w-6xl">
-      {/* Back + small trusted badge */}
-      <div className="mb-8 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => (window.location.hash = '#home')}
-            className="inline-flex items-center gap-2 text-stone-700 hover:text-stone-900 transition"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Back to Home</span>
-          </button>
-        </div>
+              {/* Grid content */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                {/* Image Column */}
+                <div className="lg:col-span-6 space-y-6">
+                  <div className="aspect-[4/3] md:aspect-auto rounded-3xl overflow-hidden shadow-xl bg-[#ede2d4] flex items-center justify-center p-4 border border-[#e8dac7]">
+                    <img
+                      src="/about_clean.png"
+                      alt="Artisan of Kashmir Valley"
+                      className="w-full h-auto max-h-[480px] object-contain rounded-2xl"
+                    />
+                  </div>
+                  {/* Students / Creators Badge */}
+                  <div className="bg-white/60 backdrop-blur-sm p-5 rounded-2xl border border-white/40 shadow-sm">
+                    <p className="text-stone-700 text-sm leading-relaxed">
+                      <strong>Our Roots:</strong> Vadiekashmir was born in the valleys of Jammu & Kashmir, created by <strong>two college students</strong> who grew up witnessing the sheer dedication of local weavers. Our platform exists to make sure their craft is celebrated and fairly compensated.
+                    </p>
+                  </div>
+                </div>
 
-        <div className="hidden md:flex items-center gap-3">
-          <span className="text-sm text-stone-500">Trusted by artisans • Fair trade • Authentic</span>
-          <div className="px-3 py-2 bg-amber-50 rounded-lg border border-amber-100 text-amber-800 font-semibold">
-            GI-tagged products where applicable
-          </div>
-        </div>
-      </div>
+                {/* Text Content Column */}
+                <div className="lg:col-span-6 space-y-6">
+                  <p className="text-amber-800 text-sm uppercase font-bold tracking-widest">Our Story & Soul</p>
+                  <h2 className="text-3xl md:text-5xl font-serif font-extrabold italic text-stone-900 tracking-wide leading-tight">
+                    A Bridge of Hope & Heritage
+                  </h2>
+                  <p className="text-stone-700 text-base md:text-lg leading-relaxed font-light">
+                    Deep within the snow-covered valleys of Kashmir, a timeless song is written by hand. Every pure Pashmina thread carries the quiet dedication of a weaver’s winter nights. Every jar of golden saffron holds the fields harvested under the early morning Pampore sun. Here, craft is not just a trade; it is a heart-to-heart legacy passed down through generations.
+                  </p>
+                  <p className="text-stone-700 text-base leading-relaxed">
+                    Yet, the families behind these treasures—the farmers who cultivate the soil, the mothers who spin the wool, the fathers who carve the wood—are often separated from those who would cherish their work.
+                  </p>
+                  <p className="text-stone-700 text-base leading-relaxed font-semibold">
+                    That is where Vadi Kashmir steps in. We do not make these masterpieces ourselves. We are simply a bridge—a humble platform built to connect you directly with the crafters, the farmers, and the makers of the valley.
+                  </p>
+                  <p className="text-stone-750 text-base leading-relaxed">
+                    While we act as a guide and a middleman, our mission is pure: to keep the light of local cottage businesses burning bright. By bringing their stories and creations straight to your doorstep, we make sure that honest value flows directly back to the weavers' hearths and the farmers' homes. Every purchase you make becomes a hand held, a family supported, and a heritage preserved.
+                  </p>
+                  
+                  {/* prepaid payment logistics note */}
+                  <div className="p-4 bg-white/40 border border-amber-900/10 rounded-xl space-y-2">
+                    <p className="text-xs text-stone-600 font-medium">
+                      <span className="text-amber-850 font-bold uppercase tracking-wider">Note:</span> As a young student startup, we currently only support prepaid orders to cover logistic costs directly back to our creators. We are working hard to support Cash on Delivery soon as we scale.
+                    </p>
+                  </div>
 
-      {/* Title: reuse your SectionTitle if available */}
-      <SectionTitle
-        title="Our Story"
-        subtitle="Bringing authentic Kashmiri craftsmanship to the world"
-      />
+                  <div className="pt-4 flex gap-4">
+                    <button
+                      onClick={() => navigateTo('shop')}
+                      className="px-8 py-3 bg-amber-700 hover:bg-amber-800 text-white rounded-xl font-semibold shadow-lg transition-all"
+                    >
+                      Shop Collections
+                    </button>
+                    <button
+                      onClick={() => navigateTo('home')}
+                      className="px-8 py-3 border border-stone-400 hover:bg-white/40 hover:text-stone-900 rounded-xl font-semibold transition-all"
+                    >
+                      Explore Home
+                    </button>
+                  </div>
+                </div>
+              </div>
 
-      {/* Hero */}
-      <div className="bg-white rounded-3xl shadow-2xl overflow-hidden grid md:grid-cols-2 gap-6 mb-10">
-        <div className="p-8 md:p-12 flex flex-col justify-center">
-          <h3 className="text-2xl md:text-3xl font-extrabold text-stone-900 mb-4">
-            The Promise of Authenticity
-          </h3>
-          <p className="text-stone-600 leading-relaxed mb-4">
-            Vadiekashmir began with a simple belief: the hands that create should be honoured and supported.
-            We travel to villages, meet artisans, and onboard only those who meet our authenticity checks — preserving
-            craft, not exploiting it.
-          </p>
-          <p className="text-stone-600 leading-relaxed mb-4">
-            Every piece is traceable. Every purchase puts money directly into artisan pockets — helping families, funding
-            training, and keeping centuries-old techniques alive.
-          </p>
-
-          <div className="mt-9 flex justify-center">
-  <a
-    href="#shop"
-    className="inline-flex items-center justify-center rounded-xl bg-amber-700 hover:bg-amber-800 text-white px-6 py-2 font-semibold shadow"
-  >
-    Shop Authentic
-  </a>
-</div>
-
-        </div>
-
-        <div className="relative min-h-[320px]">
-          {/* replace these URLs with your own images for best results */}
-          <img
-            src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop"
-            alt="Kashmir valley - artisan craft"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute left-6 bottom-6 bg-white/90 backdrop-blur-sm p-4 rounded-xl flex items-center gap-3 shadow-md">
-            <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop" alt="product" className="w-16 h-16 object-cover rounded-md" />
-            <div>
-              <div className="text-sm text-stone-600">Handpicked & Verified</div>
-              <div className="font-semibold text-stone-900">Pashmina & Handlooms</div>
+              {/* Small copyright at bottom */}
+              <div className="mt-16 text-center text-xs text-stone-500 tracking-wider">
+                © {new Date().getFullYear()} VadieKashmir — SUPPORTING ARTISANS DIRECTLY.
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Mission & Values */}
-      <div className="grid md:grid-cols-3 gap-6 mb-10">
-        <div className="bg-amber-50 rounded-2xl p-6 shadow-sm border-l-4 border-amber-600">
-          <h4 className="text-xl font-bold text-stone-900 mb-3">Our Mission</h4>
-          <p className="text-stone-600">
-            Preserve Kashmiri craft, create sustainable livelihoods for artisans, and connect their work with
-            respectful, global customers.
-          </p>
-        </div>
-
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-          <h4 className="text-xl font-bold text-stone-900 mb-3">Our Values</h4>
-          <ul className="text-stone-600 space-y-2">
-            <li>✓ 100% authenticity & traceability</li>
-            <li>✓ Fair pricing & timely payments</li>
-            <li>✓ Sustainable sourcing & minimal intermediaries</li>
-            <li>✓ Empowering artisan communities</li>
-          </ul>
-        </div>
-
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
-          <h4 className="text-xl font-bold text-stone-900 mb-3">How We Help</h4>
-          <p className="text-stone-600">
-            We reduce intermediaries, provide quality checks, facilitate fair pricing, and bring artisan stories
-            to buyers who care.
-          </p>
-        </div>
-      </div>
-
-      {/* Artisan Stories */}
-      <div id="stories" className="mb-10">
-        <h3 className="text-2xl font-extrabold text-stone-900 mb-4">Artisan Stories</h3>
-        <p className="text-stone-600 leading-relaxed mb-6">
-          Every product carries a human story — a family, a tradition, a skill taught across generations. Below are
-          a few of the hands behind the creations.
-        </p>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          <article className="bg-white rounded-2xl shadow p-4 border border-stone-100">
-            <img src="https://images.unsplash.com/photo-1543163521-1bf539c55d0a?q=80&w=1200&auto=format&fit=crop" alt="artisan weaving" className="w-full h-40 object-cover rounded-lg mb-4" />
-            <h4 className="font-semibold text-stone-900 mb-2">Asha — Weaver</h4>
-            <p className="text-stone-600 text-sm">
-              Asha learned weaving from her mother. She weaves delicate motifs by hand — every shawl can take days
-              of meticulous attention.
-            </p>
-          </article>
-
-          <article className="bg-white rounded-2xl shadow p-4 border border-stone-100">
-            <img src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=1200&auto=format&fit=crop" alt="workshop" className="w-full h-40 object-cover rounded-lg mb-4" />
-            <h4 className="font-semibold text-stone-900 mb-2">Iqbal — Dyer</h4>
-            <p className="text-stone-600 text-sm">
-              Iqbal uses natural dyes passed down generations. His colors carry seasonal stories — the warmth of autumn,
-              the cool of the river.
-            </p>
-          </article>
-
-          <article className="bg-white rounded-2xl shadow p-4 border border-stone-100">
-            <img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop" alt="product closeup" className="w-full h-40 object-cover rounded-lg mb-4" />
-            <h4 className="font-semibold text-stone-900 mb-2">Handcrafted Excellence</h4>
-            <p className="text-stone-600 text-sm">
-              From fine Pashmina to intricate embroidery, each piece is inspected and authenticated before it reaches you.
-            </p>
-          </article>
-        </div>
-      </div>
-
-     
-
-      {/* Impact & Trust */}
-      <div className="bg-white rounded-2xl shadow p-6 md:p-8 border border-stone-100 mb-10">
-        <div className="md:flex md:items-center md:justify-between gap-6">
-          <div>
-            <h3 className="text-2xl font-extrabold text-stone-900 mb-2">Our Impact</h3>
-            <p className="text-stone-600 leading-relaxed">
-              Since day one, every order has directly contributed to artisan earnings, training programs, and local
-              micro-investments. We reinvest a portion of profits to improve working conditions and supply chains.
-            </p>
-          </div>
-
-
-        </div>
-      </div>
-
-      {/* Founders Note + Important Notice */}
-      <div className="bg-amber-50 rounded-2xl p-6 md:p-8 border-l-4 border-amber-600 shadow-sm mb-8">
-        <div className="md:flex items-start gap-6">
-          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop" alt="founders" className="w-28 h-28 object-cover rounded-lg shadow-md flex-shrink-0" />
-          <div>
-            <h3 className="text-2xl font-extrabold text-stone-900 mb-2">Why we started</h3>
-            <p className="text-stone-700 leading-relaxed mb-4">
-              This project was started by <strong>two young second-year college students</strong> from Jammu & Kashmir,
-              who grew up watching local artisans work tirelessly. They launched Vadiekashmir because they believe these
-              traditions deserve a wider audience and fair compensation.
-            </p>
-
-            <p className="text-stone-700 leading-relaxed">
-              Every piece you buy helps a family, supports local schools, and keeps a cultural legacy alive. Your trust means everything to us — we promise to honour it with transparency and heart.
-            </p>
-
-            <div className="mt-4 p-4 bg-white rounded-lg border border-stone-100">
-              <p className="font-semibold text-stone-900">
-                <span className="text-red-700">Important:</span> For our first few orders we will accept <strong>non-COD (prepaid)</strong> payments only.
-                We do not yet have sufficient funds to support cash-on-delivery logistics. <strong>Cash-on-delivery will be added soon</strong> as we scale.
-              </p>
-
-              <p className="text-sm text-stone-600 mt-3">Thank you for your understanding and for trusting us with the work of Kashmir's artisans.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* CTA Footer */}
-      <div className="mt-10 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div>
-          <h4 className="text-lg font-bold text-stone-900">Join our journey</h4>
-          <p className="text-stone-600">Follow us to meet more artisans and learn about upcoming collections and collaborations.</p>
-        </div>
-        <div className="flex gap-3">
-          <a href="#subscribe" className="inline-flex items-center justify-center rounded-xl bg-amber-700 hover:bg-amber-800 text-white px-6 py-3 font-semibold shadow">
-            Subscribe
-          </a>
-          <a href="#shop" className="inline-flex items-center justify-center rounded-xl border border-stone-200 px-6 py-3 font-semibold hover:shadow">
-            Shop Now
-          </a>
-        </div>
-      </div>
-
-      <div className="mt-8 text-center text-sm text-stone-500">
-        © {new Date().getFullYear()} Vadiekashmir — Preserving craft, empowering communities.
-      </div>
-    </div>
-  </section>
-)}
-
+          </section>
+        )}
 
         {/* BLOGS PAGE */}
         {view === 'blogs' && <BlogList />}
@@ -1539,13 +1410,13 @@ const SectionTitle = ({ title, subtitle }) => (
         {view === 'blog' && <BlogDetail />}
 
         {/* PRODUCT DETAIL PAGE */}
-        {view === 'product' && <ProductDetail onAddToCart={addToCart} />}
+        {view === 'product' && <ProductDetail onAddToCart={addToCart} onBuyNow={(prod) => { addToCart(prod); setIsCartOpen(true); }} />}
 
         {/* ADMIN LOGIN PAGE */}
         {view === 'admin-login' && <AdminLogin onLoginSuccess={handleLoginSuccess} />}
 
         {/* ADMIN DASHBOARD */}
-        {view === 'admin' && user && user.email === 'admin@vadikashmir.com' && <AdminDashboard user={user} />}
+        {view === 'admin' && user && user.email === 'admin@vadikashmir.com' && <AdminDashboard user={user} onLogout={handleLogout} />}
 
         {/* TEST EMAIL PAGE */}
         {view === 'test-email' && (
@@ -1578,6 +1449,11 @@ const SectionTitle = ({ title, subtitle }) => (
         {/* ORDER PAGES */}
         {view === 'thank-you' && <ThankYou orderData={lastOrderData} />}
         {view === 'my-orders' && <MyOrders user={user} />}
+
+        {/* FALLBACK 404 PAGE */}
+        {!['home', 'shop', 'track', 'about', 'blogs', 'blog', 'product', 'admin-login', 'admin', 'privacy-policy', 'terms-of-service', 'shipping-policy', 'return-policy', 'thank-you', 'my-orders'].includes(view) && (
+          <NotFoundPage navigateTo={navigateTo} />
+        )}
       </main>
 
       {/* Footer */}
@@ -1663,7 +1539,7 @@ const SectionTitle = ({ title, subtitle }) => (
         </div>
 
         <div className="container mx-auto px-4 md:px-6 mt-12 pt-8 border-t border-stone-800 text-center text-xs">
-          <p>&copy; {new Date().getFullYear()} Vadiekashmir. All Rights Reserved.</p>
+          <p>&copy; {new Date().getFullYear()} VadieKashmir — SUPPORTING ARTISANS DIRECTLY.</p>
         </div>
       </footer>
 

@@ -31,6 +31,9 @@ class SettingsService {
       const defaultSettings = {
         acceptingOrders: false,
         maintenanceMode: false,
+        carouselImages: "",
+        theme: "default",
+        bulletinText: "",
         updatedAt: new Date().toISOString()
       };
 
@@ -83,6 +86,117 @@ class SettingsService {
     } catch (error) {
       console.error('Error getting accepting orders status:', error);
       return { success: false, acceptingOrders: false };
+    }
+  }
+
+  // Get carousel images
+  async getCarouselImages() {
+    try {
+      const result = await this.getSettings();
+      if (result.success && result.settings.carouselImages) {
+        return { success: true, carouselImages: JSON.parse(result.settings.carouselImages) };
+      }
+      return { success: true, carouselImages: [] };
+    } catch (error) {
+      console.error('Error getting carousel images:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Update carousel images
+  async setCarouselImages(images) {
+    try {
+      const doc = await databases.updateDocument(
+        DATABASE_ID,
+        COLLECTION_IDS.SETTINGS,
+        SETTINGS_DOC_ID,
+        {
+          carouselImages: JSON.stringify(images),
+          updatedAt: new Date().toISOString()
+        }
+      );
+      return { success: true, settings: doc };
+    } catch (error) {
+      if (error.code === 404) {
+        await this.initializeSettings();
+        return await this.setCarouselImages(images);
+      }
+      console.error('Error updating carousel images:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Get app theme
+  async getTheme() {
+    try {
+      const result = await this.getSettings();
+      if (result.success && result.settings.theme) {
+        return { success: true, theme: result.settings.theme };
+      }
+      return { success: true, theme: 'default' };
+    } catch (error) {
+      console.error('Error getting theme:', error);
+      return { success: false, error: error.message, theme: 'default' };
+    }
+  }
+
+  // Update app theme
+  async setTheme(theme) {
+    try {
+      const doc = await databases.updateDocument(
+        DATABASE_ID,
+        COLLECTION_IDS.SETTINGS,
+        SETTINGS_DOC_ID,
+        {
+          theme,
+          updatedAt: new Date().toISOString()
+        }
+      );
+      return { success: true, settings: doc };
+    } catch (error) {
+      if (error.code === 404) {
+        await this.initializeSettings();
+        return await this.setTheme(theme);
+      }
+      console.error('Error updating theme:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Get bulletin text
+  async getBulletinText() {
+    try {
+      const result = await this.getSettings();
+      if (result.success && result.settings.bulletinText) {
+        return { success: true, bulletinText: result.settings.bulletinText };
+      }
+      return { success: true, bulletinText: '' };
+    } catch (error) {
+      console.error('Error getting bulletin text:', error);
+      return { success: false, error: error.message, bulletinText: '' };
+    }
+  }
+
+  // Update bulletin text
+  async setBulletinText(text) {
+    try {
+      const doc = await databases.updateDocument(
+        DATABASE_ID,
+        COLLECTION_IDS.SETTINGS,
+        SETTINGS_DOC_ID,
+        {
+          bulletinText: text,
+          updatedAt: new Date().toISOString()
+        }
+      );
+      return { success: true, settings: doc };
+    } catch (error) {
+      if (error.code === 404) {
+        await this.initializeSettings();
+        return await this.setBulletinText(text);
+      }
+      console.error('Error updating bulletin text:', error);
+      return { success: false, error: error.message };
     }
   }
 }

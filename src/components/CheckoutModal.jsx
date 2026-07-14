@@ -412,63 +412,23 @@ const CheckoutModal = ({ cart, onClose, onSuccess, user, onOrderComplete }) => {
                 <h3 className="font-bold text-lg text-stone-800 mb-4">Payment Method</h3>
                 <div className="space-y-3">
                   {acceptingOrders ? (
-                    <>
-                      <label 
-                        className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-colors ${paymentMethod === 'razorpay' ? 'border-amber-500 bg-amber-50' : 'border-stone-200 hover:border-amber-500'}`}
-                        onClick={() => setPaymentMethod('razorpay')}
-                      >
-                        <input 
-                          type="radio" 
-                          name="payment" 
-                          checked={paymentMethod === 'razorpay'} 
-                          onChange={() => setPaymentMethod('razorpay')}
-                          className="w-4 h-4 text-amber-600" 
-                        />
-                        <CreditCard className="w-5 h-5 text-amber-600" />
-                        <div>
-                          <p className="font-medium text-stone-800">Pay Online</p>
-                          <p className="text-sm text-stone-600">UPI, Cards, Net Banking, Wallets</p>
-                        </div>
-                      </label>
-
-                      <label 
-                        className={`flex items-center gap-3 p-4 border-2 rounded-lg cursor-pointer transition-colors ${paymentMethod === 'cod' ? 'border-amber-500 bg-amber-50' : 'border-stone-200 hover:border-amber-500'}`}
-                        onClick={() => setPaymentMethod('cod')}
-                      >
-                        <input 
-                          type="radio" 
-                          name="payment" 
-                          checked={paymentMethod === 'cod'} 
-                          onChange={() => setPaymentMethod('cod')}
-                          className="w-4 h-4 text-amber-600" 
-                        />
-                        <Banknote className="w-5 h-5 text-green-600" />
-                        <div>
-                          <p className="font-medium text-stone-800">Cash on Delivery</p>
-                          <p className="text-sm text-stone-600">Pay when you receive (+₹50 COD fee)</p>
-                        </div>
-                      </label>
-                    </>
+                    <div 
+                      className="flex items-center gap-3 p-4 border-2 rounded-lg border-amber-500 bg-amber-50"
+                    >
+                      <CreditCard className="w-5 h-5 text-amber-700" />
+                      <div>
+                        <p className="font-medium text-stone-850">Pay Online Securely</p>
+                        <p className="text-sm text-stone-600">UPI, Cards, Net Banking, Wallets (Razorpay)</p>
+                      </div>
+                    </div>
                   ) : (
-                    <>
-                      <label className="flex items-center gap-3 p-4 border-2 rounded-lg cursor-not-allowed transition-colors border-stone-200 opacity-50">
-                        <input type="radio" name="payment" disabled className="w-4 h-4 text-amber-600" />
-                        <CreditCard className="w-5 h-5 text-stone-400" />
-                        <div>
-                          <p className="font-medium text-stone-500">Pay Online</p>
-                          <p className="text-sm text-stone-400">Currently unavailable</p>
-                        </div>
-                      </label>
-
-                      <label className="flex items-center gap-3 p-4 border-2 rounded-lg cursor-not-allowed transition-colors border-stone-200 opacity-50">
-                        <input type="radio" name="payment" disabled className="w-4 h-4 text-amber-600" />
-                        <Banknote className="w-5 h-5 text-stone-400" />
-                        <div>
-                          <p className="font-medium text-stone-500">Cash on Delivery</p>
-                          <p className="text-sm text-stone-400">Currently unavailable</p>
-                        </div>
-                      </label>
-                    </>
+                    <div className="flex items-center gap-3 p-4 border-2 rounded-lg border-stone-200 opacity-50 bg-stone-50">
+                      <CreditCard className="w-5 h-5 text-stone-400" />
+                      <div>
+                        <p className="font-medium text-stone-500">Pay Online</p>
+                        <p className="text-sm text-stone-400">Currently unavailable</p>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
