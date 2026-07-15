@@ -1241,32 +1241,65 @@ export default function App() {
               </div>
             </section>
 
-            {/* Features */}
-            <section className="py-16 bg-white">
-              <div className="container mx-auto px-4 md:px-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="text-center p-6">
-                    <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <ShieldCheck size={32} className="text-amber-700" />
+            {/* Features Section - Luxury Redesign */}
+            <section className="py-24 bg-gradient-to-b from-stone-50 via-stone-100/40 to-stone-50 relative overflow-hidden border-t border-stone-200">
+              <div className="absolute inset-0 bg-pattern opacity-[0.01] pointer-events-none"></div>
+              <div className="container mx-auto px-4 md:px-6 relative z-10">
+                <div className="text-center max-w-xl mx-auto mb-16">
+                  <span className="text-xs uppercase tracking-[0.25em] text-amber-700 font-semibold mb-3 block">
+                    Our Values
+                  </span>
+                  <h2 className="font-serif italic text-3xl md:text-4xl text-stone-950 font-medium">
+                    The VadieKashmir Promise
+                  </h2>
+                  <div className="flex justify-center items-center gap-2 mt-4">
+                    <span className="h-[1px] w-8 bg-amber-800/30"></span>
+                    <span className="text-amber-800 text-xs">✦</span>
+                    <span className="h-[1px] w-8 bg-amber-800/30"></span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+                  {/* Feature 1 */}
+                  <div className="group bg-white/70 backdrop-blur-sm p-8 rounded-2xl border border-stone-200/60 shadow-[0_4px_24px_rgba(28,25,23,0.02)] hover:shadow-[0_12px_36px_rgba(146,64,14,0.06)] transition-all duration-500 text-center hover:-translate-y-1">
+                    <div className="w-16 h-16 bg-gradient-to-br from-amber-700 to-amber-900 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md shadow-amber-900/10 group-hover:scale-110 transition-transform duration-500">
+                      <ShieldCheck size={28} className="text-amber-100" />
                     </div>
-                    <h3 className="text-xl font-bold text-stone-800 mb-2">100% Authentic</h3>
-                    <p className="text-stone-600">
-                      GI-tagged and certified products directly from verified artisans
+                    <h3 className="font-serif italic text-xl font-semibold text-stone-900 mb-2 tracking-wide">
+                      100% Authentic
+                    </h3>
+                    <div className="text-amber-700/60 text-xs mb-3">✦</div>
+                    <p className="text-sm text-stone-600 leading-relaxed font-light px-2">
+                      GI-tagged and certified products sourced directly from registered valley weavers and master artisans.
                     </p>
                   </div>
-                  <div className="text-center p-6">
-                    <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Truck size={32} className="text-amber-700" />
+
+                  {/* Feature 2 */}
+                  <div className="group bg-white/70 backdrop-blur-sm p-8 rounded-2xl border border-stone-200/60 shadow-[0_4px_24px_rgba(28,25,23,0.02)] hover:shadow-[0_12px_36px_rgba(146,64,14,0.06)] transition-all duration-500 text-center hover:-translate-y-1">
+                    <div className="w-16 h-16 bg-gradient-to-br from-amber-700 to-amber-900 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md shadow-amber-900/10 group-hover:scale-110 transition-transform duration-500">
+                      <Truck size={28} className="text-amber-100" />
                     </div>
-                    <h3 className="text-xl font-bold text-stone-800 mb-2">Fast Shipping</h3>
-                    <p className="text-stone-600">Secure packaging and reliable delivery across India</p>
+                    <h3 className="font-serif italic text-xl font-semibold text-stone-900 mb-2 tracking-wide">
+                      Fast Shipping
+                    </h3>
+                    <div className="text-amber-700/60 text-xs mb-3">✦</div>
+                    <p className="text-sm text-stone-600 leading-relaxed font-light px-2">
+                      Secure climate-controlled packaging and express priority delivery across India with full tracking.
+                    </p>
                   </div>
-                  <div className="text-center p-6">
-                    <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <CheckCircle size={32} className="text-amber-700" />
+
+                  {/* Feature 3 */}
+                  <div className="group bg-white/70 backdrop-blur-sm p-8 rounded-2xl border border-stone-200/60 shadow-[0_4px_24px_rgba(28,25,23,0.02)] hover:shadow-[0_12px_36px_rgba(146,64,14,0.06)] transition-all duration-500 text-center hover:-translate-y-1">
+                    <div className="w-16 h-16 bg-gradient-to-br from-amber-700 to-amber-900 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md shadow-amber-900/10 group-hover:scale-110 transition-transform duration-500">
+                      <CheckCircle size={28} className="text-amber-100" />
                     </div>
-                    <h3 className="text-xl font-bold text-stone-800 mb-2">Fair Trade</h3>
-                    <p className="text-stone-600">Supporting artisan communities and sustainable practices</p>
+                    <h3 className="font-serif italic text-xl font-semibold text-stone-900 mb-2 tracking-wide">
+                      Fair Trade
+                    </h3>
+                    <div className="text-amber-700/60 text-xs mb-3">✦</div>
+                    <p className="text-sm text-stone-600 leading-relaxed font-light px-2">
+                      100% direct payment to local communities, sustaining heritage crafts and helping direct artisan growth.
+                    </p>
                   </div>
                 </div>
               </div>
