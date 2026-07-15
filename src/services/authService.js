@@ -172,12 +172,25 @@ class AuthService {
   // Create or update user profile in database
   async createOrUpdateUser(authUser) {
     try {
-      const userData = {
-        userId: authUser.$id,
-        phone: authUser.phone,
-        name: authUser.name || '',
+      const authId = authUser.id || authUser.$id;
+      const dbUserData = {
+        accountId: authId,
+        name: authUser.name || 'User',
         email: authUser.email || '',
-        isAdmin: false
+        mobile: authUser.phone || 'N/A',
+        role: authUser.isAdmin ? 'admin' : 'user',
+        verified: true,
+        createdAt: new Date().toISOString()
+      };
+
+      const clientUserData = {
+        $id: authId,
+        id: authId,
+        name: dbUserData.name,
+        email: dbUserData.email,
+        phone: dbUserData.mobile,
+        phoneNumber: dbUserData.mobile,
+        isAdmin: dbUserData.role === 'admin'
       };
 
       let isNew = false;
@@ -185,7 +198,7 @@ class AuthService {
         const existingUsers = await databases.listDocuments(
           DATABASE_ID,
           COLLECTION_IDS.USERS,
-          [Query.equal('userId', authUser.$id)]
+          [Query.equal('accountId', authId)]
         );
 
         if (existingUsers.documents.length > 0) {
@@ -194,7 +207,13 @@ class AuthService {
             DATABASE_ID,
             COLLECTION_IDS.USERS,
             existingUsers.documents[0].$id,
-            userData
+            {
+              name: dbUserData.name,
+              email: dbUserData.email,
+              mobile: dbUserData.mobile,
+              role: dbUserData.role,
+              updatedAt: new Date().toISOString()
+            }
           );
         } else {
           // Create new user
@@ -202,7 +221,7 @@ class AuthService {
             DATABASE_ID,
             COLLECTION_IDS.USERS,
             ID.unique(),
-            userData
+            dbUserData
           );
           isNew = true;
         }
@@ -212,7 +231,7 @@ class AuthService {
 
       return {
         success: true,
-        user: userData,
+        user: clientUserData,
         isNew
       };
     } catch (error) {
@@ -227,27 +246,44 @@ class AuthService {
   // Update user profile
   async updateProfile(userId, data) {
     try {
-      // Get user document
       const users = await databases.listDocuments(
         DATABASE_ID,
         COLLECTION_IDS.USERS,
-        [`userId=${userId}`]
+        [Query.equal('accountId', userId)]
       );
 
       if (users.documents.length === 0) {
         throw new Error('User not found');
       }
 
+      const dbUpdateData = {};
+      if (data.name !== undefined) dbUpdateData.name = data.name;
+      if (data.email !== undefined) dbUpdateData.email = data.email;
+      if (data.phone !== undefined) dbUpdateData.mobile = data.phone;
+      if (data.phoneNumber !== undefined) dbUpdateData.mobile = data.phoneNumber;
+      if (data.isAdmin !== undefined) dbUpdateData.role = data.isAdmin ? 'admin' : 'user';
+      dbUpdateData.updatedAt = new Date().toISOString();
+
       const updatedUser = await databases.updateDocument(
         DATABASE_ID,
         COLLECTION_IDS.USERS,
         users.documents[0].$id,
-        data
+        dbUpdateData
       );
+
+      const clientUserData = {
+        $id: updatedUser.accountId,
+        id: updatedUser.accountId,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        phone: updatedUser.mobile,
+        phoneNumber: updatedUser.mobile,
+        isAdmin: updatedUser.role === 'admin'
+      };
 
       return {
         success: true,
-        user: updatedUser
+        user: clientUserData
       };
     } catch (error) {
       console.error('Update profile error:', error);
@@ -264,7 +300,7 @@ class AuthService {
       const users = await databases.listDocuments(
         DATABASE_ID,
         COLLECTION_IDS.USERS,
-        [Query.equal('userId', userId)]
+        [Query.equal('accountId', userId)]
       );
 
       if (users.documents.length === 0) {
@@ -274,9 +310,20 @@ class AuthService {
         };
       }
 
+      const dbUser = users.documents[0];
+      const clientUserData = {
+        $id: dbUser.accountId,
+        id: dbUser.accountId,
+        name: dbUser.name,
+        email: dbUser.email,
+        phone: dbUser.mobile,
+        phoneNumber: dbUser.mobile,
+        isAdmin: dbUser.role === 'admin'
+      };
+
       return {
         success: true,
-        user: users.documents[0]
+        user: clientUserData
       };
     } catch (error) {
       console.error('Get user profile error:', error);

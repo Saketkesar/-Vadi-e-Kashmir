@@ -124,7 +124,13 @@ const AdminDashboard = ({ user, onClose, onLogout }) => {
       if (ordersRes.success) setOrders(ordersRes.orders);
       if (blogsRes.success) setBlogs(blogsRes.blogs);
       if (statsRes.success) setStats(statsRes.stats);
-      if (usersRes.documents) setUsers(usersRes.documents);
+      if (usersRes.documents) {
+        const mappedUsers = usersRes.documents.map(u => ({
+          ...u,
+          phoneNumber: u.mobile || u.phoneNumber || 'N/A'
+        }));
+        setUsers(mappedUsers);
+      }
     } catch (error) {
       console.error('Error loading data:', error);
     }
