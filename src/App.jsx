@@ -894,7 +894,7 @@ export default function App() {
       <header className="sticky top-0 z-30 bg-white shadow-sm border-b border-stone-200">
         <div className="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
           <button onClick={() => navigateTo('home')} className="flex items-center hover:opacity-80 transition-opacity flex-shrink-0">
-            <img src="/vadielogo.png" alt="Vadiekashmir Logo" className="h-10 md:h-12 w-auto object-contain" />
+            <img src="/vadielogo.png" alt="Vadiekashmir Logo" className="h-10 md:h-12 w-auto object-contain" width="200" height="48" fetchpriority="high" />
           </button>
 
           <nav className="hidden md:flex gap-8">
@@ -1113,70 +1113,83 @@ export default function App() {
             <section className="relative h-[550px] md:h-[600px] flex items-center justify-center overflow-hidden bg-stone-900 shadow-inner">
               {carouselSlides.length > 0 ? (
                 <>
-                  {carouselSlides.map((slide, index) => (
-                    <div
-                      key={index}
-                      className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                        index === activeSlide ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
-                      }`}
-                    >
+                  {carouselSlides.map((slide, index) => {
+                    // Transform Appwrite storage URLs to serve compressed images
+                    const optimizedUrl = slide.url && slide.url.includes('appwrite.io/v1/storage')
+                      ? slide.url + '&width=1400&height=700&gravity=center&quality=75&output=webp'
+                      : slide.url;
+                    return (
                       <div
-                        className="absolute inset-0 bg-cover bg-center transition-transform duration-[8000ms] ease-out"
-                        style={{
-                          backgroundImage: `url('${slide.url}')`,
-                          transform: index === activeSlide ? 'scale(1.05)' : 'scale(1)'
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-black/45"></div>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center text-white px-6 max-w-4xl mx-auto space-y-6">
-                          {slide.title && (
-                            <h2 className="text-4xl md:text-6xl font-bold tracking-tight drop-shadow-md">
-                              {slide.title}
-                            </h2>
-                          )}
-                          {slide.subtitle && (
-                            <p className="text-base md:text-xl max-w-2xl mx-auto font-light leading-relaxed drop-shadow-sm">
-                              {slide.subtitle}
-                            </p>
-                          )}
-                          <div className="flex gap-4 justify-center pt-2">
-                            <Button
-                              onClick={() => {
-                                if (slide.link) {
-                                  if (slide.link.startsWith('#')) {
-                                    const page = slide.link.substring(1);
-                                    window.location.hash = slide.link;
-                                    if (['home', 'shop', 'blogs', 'track', 'about', 'my-orders'].includes(page)) {
-                                      navigateTo(page);
+                        key={index}
+                        className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+                          index === activeSlide ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none z-0'
+                        }`}
+                      >
+                        {/* Use <img> instead of background-image so browser can prioritize LCP */}
+                        <img
+                          src={optimizedUrl}
+                          alt={slide.title || 'VadieKashmir'}
+                          width="1400"
+                          height="700"
+                          fetchpriority={index === 0 ? 'high' : 'low'}
+                          loading={index === 0 ? 'eager' : 'lazy'}
+                          decoding={index === 0 ? 'sync' : 'async'}
+                          className="absolute inset-0 w-full h-full object-cover object-center"
+                          style={{ transform: index === activeSlide ? 'scale(1.05)' : 'scale(1)', transition: 'transform 8000ms ease-out' }}
+                        />
+                        <div className="absolute inset-0 bg-black/45"></div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-center text-white px-6 max-w-4xl mx-auto space-y-6">
+                            {slide.title && (
+                              <h2 className="text-4xl md:text-6xl font-bold tracking-tight drop-shadow-md">
+                                {slide.title}
+                              </h2>
+                            )}
+                            {slide.subtitle && (
+                              <p className="text-base md:text-xl max-w-2xl mx-auto font-light leading-relaxed drop-shadow-sm">
+                                {slide.subtitle}
+                              </p>
+                            )}
+                            <div className="flex gap-4 justify-center pt-2">
+                              <Button
+                                onClick={() => {
+                                  if (slide.link) {
+                                    if (slide.link.startsWith('#')) {
+                                      const page = slide.link.substring(1);
+                                      window.location.hash = slide.link;
+                                      if (['home', 'shop', 'blogs', 'track', 'about', 'my-orders'].includes(page)) {
+                                        navigateTo(page);
+                                      }
+                                    } else {
+                                      window.location.href = slide.link;
                                     }
                                   } else {
-                                    window.location.href = slide.link;
+                                    navigateTo('shop');
                                   }
-                                } else {
-                                  navigateTo('shop');
-                                }
-                              }}
-                              variant="primary"
-                              className="px-8 py-3 text-base shadow-lg"
-                            >
-                              Shop Now
-                              <ChevronRight size={20} />
-                            </Button>
+                                }}
+                                variant="primary"
+                                className="px-8 py-3 text-base shadow-lg"
+                              >
+                                Shop Now
+                                <ChevronRight size={20} />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
 
                   {/* Navigation Arrows */}
                   <button
+                    aria-label="Previous slide"
                     onClick={() => setActiveSlide(prev => (prev === 0 ? carouselSlides.length - 1 : prev - 1))}
                     className="absolute left-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/30 text-white/90 hover:bg-black/60 hover:text-white transition-all z-20"
                   >
                     <ChevronRight size={22} className="rotate-180" />
                   </button>
                   <button
+                    aria-label="Next slide"
                     onClick={() => setActiveSlide(prev => (prev === carouselSlides.length - 1 ? 0 : prev + 1))}
                     className="absolute right-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/30 text-white/90 hover:bg-black/60 hover:text-white transition-all z-20"
                   >
@@ -1188,6 +1201,7 @@ export default function App() {
                     {carouselSlides.map((_, index) => (
                       <button
                         key={index}
+                        aria-label={`Go to slide ${index + 1}`}
                         onClick={() => setActiveSlide(index)}
                         className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                           index === activeSlide ? 'bg-amber-600 scale-125 w-6' : 'bg-white/50 hover:bg-white/80'
@@ -1199,10 +1213,11 @@ export default function App() {
               ) : (
                 <div className="text-white text-center py-20">
                   <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white mb-2"></div>
-                  <p className="text-sm">Loading slides...</p>
+                  <p className="text-sm">Loading...</p>
                 </div>
               )}
             </section>
+
 
             {/* Featured Products */}
             <section className="py-16 container mx-auto px-4 md:px-6">

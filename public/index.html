@@ -62,8 +62,21 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
     <!-- Preconnect to external domains for performance -->
-    <link rel="preconnect" href="https://fra.cloud.appwrite.io" />
+    <link rel="preconnect" href="https://fra.cloud.appwrite.io" crossorigin />
     <link rel="dns-prefetch" href="https://fra.cloud.appwrite.io" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="preconnect" href="https://img.freepik.com" crossorigin />
+
+    <!-- Google Fonts — non-blocking with font-display:swap -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" /></noscript>
+
+    <!-- Preload logo (above-the-fold critical asset) -->
+    <link rel="preload" as="image" href="/vadielogo.png" />
+
 
     <!-- Structured Data -->
     <script type="application/ld+json">
