@@ -1481,7 +1481,16 @@ const SectionTitle = ({ title, subtitle }) => (
       <footer className="bg-stone-900 text-stone-400 py-16 border-t border-stone-800">
         <div className="container mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
           <div>
-            <h2 className="font-serif text-2xl text-white mb-6">Vadiekashmir</h2>
+            <div className="mb-6">
+              <img
+                src="/vadielogo.png"
+                alt="VadieKashmir"
+                width="160"
+                height="38"
+                loading="lazy"
+                className="w-40 h-auto object-contain brightness-0 invert"
+              />
+            </div>
             <p className="text-sm mb-6">
               Bringing the rarest treasures of the Himalayas to the world. Authentic, ethical, premium.
             </p>
@@ -1560,6 +1569,16 @@ const SectionTitle = ({ title, subtitle }) => (
         </div>
 
         <div className="container mx-auto px-4 md:px-6 mt-12 pt-8 border-t border-stone-800 text-center text-xs">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <img
+              src="/vadielogo.png"
+              alt="VadieKashmir"
+              width="100"
+              height="24"
+              loading="lazy"
+              className="h-6 w-auto object-contain brightness-0 invert opacity-70"
+            />
+          </div>
           <p>&copy; {new Date().getFullYear()} VadieKashmir — SUPPORTING ARTISANS DIRECTLY.</p>
         </div>
       </footer>
