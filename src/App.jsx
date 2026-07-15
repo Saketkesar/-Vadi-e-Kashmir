@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   ShoppingBag, Menu, X, Search, Star, ChevronRight, MapPin, Instagram, Facebook, Twitter,
-  CheckCircle, ShieldCheck, Truck, Package, FileText, Lock, AlertCircle, Phone, Mail
+  CheckCircle, ShieldCheck, Truck, Package, FileText, Lock, AlertCircle, Phone, Mail, ArrowUpRight
 } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 import toast from 'react-hot-toast';
@@ -1241,65 +1241,110 @@ export default function App() {
               </div>
             </section>
 
-            {/* Features Section - Luxury Redesign */}
-            <section className="py-24 bg-gradient-to-b from-stone-50 via-stone-100/40 to-stone-50 relative overflow-hidden border-t border-stone-200">
-              <div className="absolute inset-0 bg-pattern opacity-[0.01] pointer-events-none"></div>
-              <div className="container mx-auto px-4 md:px-6 relative z-10">
-                <div className="text-center max-w-xl mx-auto mb-16">
-                  <span className="text-xs uppercase tracking-[0.25em] text-amber-700 font-semibold mb-3 block">
+            {/* Features Section - Aesthetic Bold Bilingual Redesign */}
+            <section className="py-28 bg-[#f5f0e6] relative overflow-hidden border-t border-stone-300">
+              {/* Subtle design grid pattern */}
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5dec9_1px,transparent_1px),linear-gradient(to_bottom,#e5dec9_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-25"></div>
+              
+              <div className="container mx-auto px-4 md:px-12 relative z-10">
+                <div className="max-w-xl mb-20">
+                  <span className="text-xs uppercase tracking-[0.3em] text-[#c2410c] font-bold mb-3 block">
                     Our Values
                   </span>
-                  <h2 className="font-serif italic text-3xl md:text-4xl text-stone-950 font-medium">
+                  <h2 className="font-serif italic text-4xl md:text-5xl text-stone-900 font-medium">
                     The VadieKashmir Promise
                   </h2>
-                  <div className="flex justify-center items-center gap-2 mt-4">
-                    <span className="h-[1px] w-8 bg-amber-800/30"></span>
-                    <span className="text-amber-800 text-xs">✦</span>
-                    <span className="h-[1px] w-8 bg-amber-800/30"></span>
-                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-                  {/* Feature 1 */}
-                  <div className="group bg-white/70 backdrop-blur-sm p-8 rounded-2xl border border-stone-200/60 shadow-[0_4px_24px_rgba(28,25,23,0.02)] hover:shadow-[0_12px_36px_rgba(146,64,14,0.06)] transition-all duration-500 text-center hover:-translate-y-1">
-                    <div className="w-16 h-16 bg-gradient-to-br from-amber-700 to-amber-900 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md shadow-amber-900/10 group-hover:scale-110 transition-transform duration-500">
-                      <ShieldCheck size={28} className="text-amber-100" />
+                <div className="flex flex-col">
+                  {/* Promise Card 1 */}
+                  <div className="py-16 border-t border-stone-300 flex flex-col justify-between relative group">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
+                      <h3 className="text-5xl md:text-8xl font-black tracking-tighter text-stone-900 uppercase transition-all duration-300 group-hover:text-amber-800">
+                        100% Authentic
+                      </h3>
+                      <button 
+                        onClick={() => navigateTo('shop')} 
+                        className="flex items-center gap-1.5 text-sm font-bold tracking-wider uppercase text-stone-800 hover:text-amber-800 transition-colors self-start md:self-auto"
+                      >
+                        Explore Purity <ArrowUpRight size={18} />
+                      </button>
                     </div>
-                    <h3 className="font-serif italic text-xl font-semibold text-stone-900 mb-2 tracking-wide">
-                      100% Authentic
-                    </h3>
-                    <div className="text-amber-700/60 text-xs mb-3">✦</div>
-                    <p className="text-sm text-stone-600 leading-relaxed font-light px-2">
-                      GI-tagged and certified products sourced directly from registered valley weavers and master artisans.
-                    </p>
+
+                    <div className="border-l-4 border-[#c2410c] pl-5 my-6 max-w-4xl">
+                      <p className="text-xl md:text-2xl font-serif text-[#c2410c] italic font-medium leading-relaxed">
+                        "अस्ल माल, यथ नी कंह्य मिलावटुच बात /"
+                      </p>
+                      <p className="text-sm text-stone-500 mt-2 tracking-wide font-sans not-italic uppercase font-medium">
+                        — Pure Kashmiri creation, where there is no talk of compromise
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-x-8 gap-y-2 mt-4 text-stone-600 font-medium text-sm tracking-wide">
+                      <span>✦ Handwoven Pashmina</span>
+                      <span>✦ Certified Pampore Saffron</span>
+                      <span>✦ GI-Tagged Woodcrafts</span>
+                    </div>
                   </div>
 
-                  {/* Feature 2 */}
-                  <div className="group bg-white/70 backdrop-blur-sm p-8 rounded-2xl border border-stone-200/60 shadow-[0_4px_24px_rgba(28,25,23,0.02)] hover:shadow-[0_12px_36px_rgba(146,64,14,0.06)] transition-all duration-500 text-center hover:-translate-y-1">
-                    <div className="w-16 h-16 bg-gradient-to-br from-amber-700 to-amber-900 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md shadow-amber-900/10 group-hover:scale-110 transition-transform duration-500">
-                      <Truck size={28} className="text-amber-100" />
+                  {/* Promise Card 2 */}
+                  <div className="py-16 border-t border-stone-300 flex flex-col justify-between relative group">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
+                      <h3 className="text-5xl md:text-8xl font-black tracking-tighter text-stone-900 uppercase transition-all duration-300 group-hover:text-amber-800">
+                        Valley Dispatch
+                      </h3>
+                      <button 
+                        onClick={() => navigateTo('track')} 
+                        className="flex items-center gap-1.5 text-sm font-bold tracking-wider uppercase text-stone-800 hover:text-amber-800 transition-colors self-start md:self-auto"
+                      >
+                        Track Shipments <ArrowUpRight size={18} />
+                      </button>
                     </div>
-                    <h3 className="font-serif italic text-xl font-semibold text-stone-900 mb-2 tracking-wide">
-                      Fast Shipping
-                    </h3>
-                    <div className="text-amber-700/60 text-xs mb-3">✦</div>
-                    <p className="text-sm text-stone-600 leading-relaxed font-light px-2">
-                      Secure climate-controlled packaging and express priority delivery across India with full tracking.
-                    </p>
+
+                    <div className="border-l-4 border-[#c2410c] pl-5 my-6 max-w-4xl">
+                      <p className="text-xl md:text-2xl font-serif text-[#c2410c] italic font-medium leading-relaxed">
+                        "श्रीनगरा कोला थ्होड़, तुहाड़े दफ्तरें तगर भरोसा हर मोड़ /"
+                      </p>
+                      <p className="text-sm text-stone-500 mt-2 tracking-wide font-sans not-italic uppercase font-medium">
+                        — Dispatched direct from Srinagar hub, trust delivered safely to your doorstep
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-x-8 gap-y-2 mt-4 text-stone-600 font-medium text-sm tracking-wide">
+                      <span>✦ Priority Express Air</span>
+                      <span>✦ Secure Wooden Crating</span>
+                      <span>✦ Direct Logistics Tracking</span>
+                    </div>
                   </div>
 
-                  {/* Feature 3 */}
-                  <div className="group bg-white/70 backdrop-blur-sm p-8 rounded-2xl border border-stone-200/60 shadow-[0_4px_24px_rgba(28,25,23,0.02)] hover:shadow-[0_12px_36px_rgba(146,64,14,0.06)] transition-all duration-500 text-center hover:-translate-y-1">
-                    <div className="w-16 h-16 bg-gradient-to-br from-amber-700 to-amber-900 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md shadow-amber-900/10 group-hover:scale-110 transition-transform duration-500">
-                      <CheckCircle size={28} className="text-amber-100" />
+                  {/* Promise Card 3 */}
+                  <div className="py-16 border-t border-stone-300 border-b flex flex-col justify-between relative group mb-8">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
+                      <h3 className="text-5xl md:text-8xl font-black tracking-tighter text-stone-900 uppercase transition-all duration-300 group-hover:text-amber-800">
+                        Artisan First
+                      </h3>
+                      <button 
+                        onClick={() => navigateTo('about')} 
+                        className="flex items-center gap-1.5 text-sm font-bold tracking-wider uppercase text-stone-800 hover:text-amber-800 transition-colors self-start md:self-auto"
+                      >
+                        Our Heritage Story <ArrowUpRight size={18} />
+                      </button>
                     </div>
-                    <h3 className="font-serif italic text-xl font-semibold text-stone-900 mb-2 tracking-wide">
-                      Fair Trade
-                    </h3>
-                    <div className="text-amber-700/60 text-xs mb-3">✦</div>
-                    <p className="text-sm text-stone-600 leading-relaxed font-light px-2">
-                      100% direct payment to local communities, sustaining heritage crafts and helping direct artisan growth.
-                    </p>
+
+                    <div className="border-l-4 border-[#c2410c] pl-5 my-6 max-w-4xl">
+                      <p className="text-xl md:text-2xl font-serif text-[#c2410c] italic font-medium leading-relaxed">
+                        "कारिगरन हुन्द हुनर, कश्मीरी सुन्नुय गाम /"
+                      </p>
+                      <p className="text-sm text-stone-500 mt-2 tracking-wide font-sans not-italic uppercase font-medium">
+                        — Sustaining the weavers and makers whose craft is the gold of Kashmir
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-x-8 gap-y-2 mt-4 text-stone-600 font-medium text-sm tracking-wide">
+                      <span>✦ 100% Direct Pay Structure</span>
+                      <span>✦ Zero Commission Middlemen</span>
+                      <span>✦ Supporting Rural Weavers</span>
+                    </div>
                   </div>
                 </div>
               </div>
