@@ -1241,7 +1241,7 @@ export default function App() {
               </div>
             </section>
 
-            {/* Features Section - Aesthetic Bold Bilingual Redesign */}
+            {/* Features Section - Aesthetic Bold Kashmiri-Only Redesign */}
             <section className="py-28 bg-[#f5f0e6] relative overflow-hidden border-t border-stone-300">
               {/* Subtle design grid pattern */}
               <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5dec9_1px,transparent_1px),linear-gradient(to_bottom,#e5dec9_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-25"></div>
@@ -1258,8 +1258,14 @@ export default function App() {
 
                 <div className="flex flex-col">
                   {/* Promise Card 1 */}
-                  <div className="py-16 border-t border-stone-300 flex flex-col justify-between relative group">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
+                  <div className="py-16 border-t border-stone-300 flex flex-col justify-between relative group overflow-hidden">
+                    {/* Background Chinar Leaf Line Art */}
+                    <svg className="absolute right-0 top-6 w-44 h-44 text-stone-900/[0.03] group-hover:text-amber-900/[0.05] transition-colors duration-500 pointer-events-none select-none z-0" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1">
+                      <path d="M50 85 L50 70 M50 70 C45 60, 30 65, 25 55 C20 45, 35 45, 30 35 C25 25, 40 30, 45 20 C48 10, 52 10, 55 20 C60 30, 75 25, 70 35 C65 45, 80 45, 75 55 C70 65, 55 60, 50 70" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M50 70 L40 50 M50 60 L60 45 M50 50 L45 35 M50 45 L55 30" strokeLinecap="round" />
+                    </svg>
+
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
                       <h3 className="text-5xl md:text-8xl font-black tracking-tighter text-stone-900 uppercase transition-all duration-300 group-hover:text-amber-800">
                         100% Authentic
                       </h3>
@@ -1271,7 +1277,7 @@ export default function App() {
                       </button>
                     </div>
 
-                    <div className="border-l-4 border-[#c2410c] pl-5 my-6 max-w-4xl">
+                    <div className="relative z-10 border-l-4 border-[#c2410c] pl-5 my-6 max-w-4xl">
                       <p className="text-xl md:text-2xl font-serif text-[#c2410c] italic font-medium leading-relaxed">
                         "अस्ल माल, यथ नी कंह्य मिलावटुच बात /"
                       </p>
@@ -1280,16 +1286,26 @@ export default function App() {
                       </p>
                     </div>
 
-                    <div className="flex flex-wrap gap-x-8 gap-y-2 mt-4 text-stone-600 font-medium text-sm tracking-wide">
-                      <span>✦ Handwoven Pashmina</span>
-                      <span>✦ Certified Pampore Saffron</span>
-                      <span>✦ GI-Tagged Woodcrafts</span>
+                    <div className="relative z-10 flex flex-wrap gap-x-8 gap-y-2 mt-4 text-stone-600 font-semibold text-xs uppercase tracking-wider">
+                      <span>Handwoven Pashmina</span>
+                      <span className="text-stone-300">|</span>
+                      <span>Certified Pampore Saffron</span>
+                      <span className="text-stone-300">|</span>
+                      <span>GI-Tagged Woodcrafts</span>
                     </div>
                   </div>
 
                   {/* Promise Card 2 */}
-                  <div className="py-16 border-t border-stone-300 flex flex-col justify-between relative group">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
+                  <div className="py-16 border-t border-stone-300 flex flex-col justify-between relative group overflow-hidden">
+                    {/* Background Samovar Line Art */}
+                    <svg className="absolute right-4 top-6 w-44 h-44 text-stone-900/[0.03] group-hover:text-amber-900/[0.05] transition-colors duration-500 pointer-events-none select-none z-0" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="1">
+                      <path d="M35 80 L65 80 M50 80 L50 70 M30 70 L70 70 C70 50, 65 35, 50 35 C35 35, 30 50, 30 70 Z" strokeLinecap="round" />
+                      <path d="M38 35 C38 30, 62 30, 62 35 M50 30 C50 25, 50 25, 50 25" strokeLinecap="round" />
+                      <path d="M30 55 C20 55, 18 45, 15 48 C12 50, 15 65, 30 63" strokeLinecap="round" />
+                      <path d="M70 50 C80 50, 80 65, 70 68" strokeLinecap="round" />
+                    </svg>
+
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
                       <h3 className="text-5xl md:text-8xl font-black tracking-tighter text-stone-900 uppercase transition-all duration-300 group-hover:text-amber-800">
                         Valley Dispatch
                       </h3>
@@ -1301,25 +1317,33 @@ export default function App() {
                       </button>
                     </div>
 
-                    <div className="border-l-4 border-[#c2410c] pl-5 my-6 max-w-4xl">
+                    <div className="relative z-10 border-l-4 border-[#c2410c] pl-5 my-6 max-w-4xl">
                       <p className="text-xl md:text-2xl font-serif text-[#c2410c] italic font-medium leading-relaxed">
-                        "श्रीनगरा कोला थ्होड़, तुहाड़े दफ्तरें तगर भरोसा हर मोड़ /"
+                        "श्रीनगरा पेट्ठ सीधे गरस ताम, असलि कश्मीरी सौगात /"
                       </p>
                       <p className="text-sm text-stone-500 mt-2 tracking-wide font-sans not-italic uppercase font-medium">
-                        — Dispatched direct from Srinagar hub, trust delivered safely to your doorstep
+                        — Direct from Srinagar to your doorstep, the authentic Kashmiri gift
                       </p>
                     </div>
 
-                    <div className="flex flex-wrap gap-x-8 gap-y-2 mt-4 text-stone-600 font-medium text-sm tracking-wide">
-                      <span>✦ Priority Express Air</span>
-                      <span>✦ Secure Wooden Crating</span>
-                      <span>✦ Direct Logistics Tracking</span>
+                    <div className="relative z-10 flex flex-wrap gap-x-8 gap-y-2 mt-4 text-stone-600 font-semibold text-xs uppercase tracking-wider">
+                      <span>Priority Express Air</span>
+                      <span className="text-stone-300">|</span>
+                      <span>Secure Wooden Crating</span>
+                      <span className="text-stone-300">|</span>
+                      <span>Direct Logistics Tracking</span>
                     </div>
                   </div>
 
                   {/* Promise Card 3 */}
-                  <div className="py-16 border-t border-stone-300 border-b flex flex-col justify-between relative group mb-8">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
+                  <div className="py-16 border-t border-stone-300 border-b flex flex-col justify-between relative group mb-8 overflow-hidden">
+                    {/* Background Mountain Outline */}
+                    <svg className="absolute right-4 top-6 w-52 h-44 text-stone-900/[0.03] group-hover:text-amber-900/[0.05] transition-colors duration-500 pointer-events-none select-none z-0" viewBox="0 0 120 100" fill="none" stroke="currentColor" strokeWidth="1">
+                      <path d="M10 80 L35 45 L55 65 L85 30 L110 80 Z" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M30 80 L55 55 L75 75 L95 48 L115 80" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 mb-6">
                       <h3 className="text-5xl md:text-8xl font-black tracking-tighter text-stone-900 uppercase transition-all duration-300 group-hover:text-amber-800">
                         Artisan First
                       </h3>
@@ -1331,7 +1355,7 @@ export default function App() {
                       </button>
                     </div>
 
-                    <div className="border-l-4 border-[#c2410c] pl-5 my-6 max-w-4xl">
+                    <div className="relative z-10 border-l-4 border-[#c2410c] pl-5 my-6 max-w-4xl">
                       <p className="text-xl md:text-2xl font-serif text-[#c2410c] italic font-medium leading-relaxed">
                         "कारिगरन हुन्द हुनर, कश्मीरी सुन्नुय गाम /"
                       </p>
@@ -1340,10 +1364,12 @@ export default function App() {
                       </p>
                     </div>
 
-                    <div className="flex flex-wrap gap-x-8 gap-y-2 mt-4 text-stone-600 font-medium text-sm tracking-wide">
-                      <span>✦ 100% Direct Pay Structure</span>
-                      <span>✦ Zero Commission Middlemen</span>
-                      <span>✦ Supporting Rural Weavers</span>
+                    <div className="relative z-10 flex flex-wrap gap-x-8 gap-y-2 mt-4 text-stone-600 font-semibold text-xs uppercase tracking-wider">
+                      <span>100% Direct Pay Structure</span>
+                      <span className="text-stone-300">|</span>
+                      <span>Zero Commission Middlemen</span>
+                      <span className="text-stone-300">|</span>
+                      <span>Supporting Rural Weavers</span>
                     </div>
                   </div>
                 </div>
